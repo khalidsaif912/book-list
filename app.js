@@ -29,6 +29,7 @@ const API_ROOT = (function () {
 const MISSION_KEEP = ["Dep Flt", "Airline Name", "Status", "Nature", "Dest.", "STD", "Dep Stand"];
 const EXCELJS_CDN = "https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js";
 const AMS_TRACKING_URL = "https://ams-web.omanairports.co.om/#trackingGrid";
+const AMS_SETTINGS_KEY = "amsMissionSettings";
 const AWB_PREFIX = "910";
 const PRESETS = [
   "https://www.google.com/search?q={flight}+{date}",
@@ -58,16 +59,25 @@ const I18N = {
     missionFormatReady: "Formatted — print is ready",
     missionOpenAms: "Open AMS",
     missionModeUpload: "Upload file",
-    missionModeAms: "AMS login",
+    missionModeAms: "AMS",
+    amsSettings: "Settings",
     amsUser: "Username",
     amsPass: "Password",
+    amsShowPass: "Show",
+    amsHidePass: "Hide",
     amsAirport: "Airport",
+    amsToken: "Session token (optional)",
+    amsSaveSettings: "Save",
+    amsClearSettings: "Clear saved",
+    amsSettingsHint: "Saved on this device only. If password login fails, open AMS, sign in, copy X-AMSAuthorization from DevTools, and paste it here.",
+    amsSettingsSaved: "Settings saved",
+    amsWhenTitle: "Date & time",
     amsDate: "Date",
     amsFrom: "From",
     amsTo: "To",
-    amsFetch: "Sign in & fetch",
-    amsFetching: "Signing in…",
-    amsHint: "Normal AMS login. Password is not saved on this site.",
+    amsFetch: "Fetch table",
+    amsFetching: "Fetching…",
+    amsHint: "Uses the credentials saved in Settings.",
     missionRecentTitle: "Last 10 tables",
     missionRecentNote: "Saved globally on the server",
     missionRecentEmpty: "No saved tables yet",
@@ -164,10 +174,10 @@ const I18N = {
       save_failed: "Could not save the table.",
       not_found: "Saved table not found.",
       file_too_large: "File is too large.",
-      need_credentials: "Enter username and password.",
+      need_credentials: "Open Settings and enter username/password, or paste a session token.",
       need_datetime: "Choose a date and time range.",
-      login_failed: "AMS login failed. Check username and password.",
-      login_no_token: "AMS login did not return a session.",
+      login_failed: "AMS login failed. Check credentials in Settings, or paste X-AMSAuthorization from an AMS browser session.",
+      login_no_token: "AMS login did not return a session. Paste X-AMSAuthorization from DevTools in Settings.",
       ams_unreachable: "Could not reach AMS.",
       ams_fetch_failed: "Could not fetch the flight table from AMS.",
       ams_empty: "No flights found for that time range.",
@@ -198,16 +208,25 @@ const I18N = {
     missionFormatReady: "تم التنسيق — الطباعة جاهزة",
     missionOpenAms: "فتح AMS",
     missionModeUpload: "رفع ملف",
-    missionModeAms: "دخول AMS",
+    missionModeAms: "AMS",
+    amsSettings: "إعدادات",
     amsUser: "اسم المستخدم",
     amsPass: "كلمة المرور",
+    amsShowPass: "إظهار",
+    amsHidePass: "إخفاء",
     amsAirport: "المطار",
+    amsToken: "رمز الجلسة (اختياري)",
+    amsSaveSettings: "حفظ",
+    amsClearSettings: "مسح المحفوظ",
+    amsSettingsHint: "تُحفظ على هذا الجهاز فقط. إذا فشل الدخول بكلمة المرور: افتح AMS وسجّل الدخول، انسخ X-AMSAuthorization من أدوات المطوّر والصقه هنا.",
+    amsSettingsSaved: "تم حفظ الإعدادات",
+    amsWhenTitle: "التاريخ والوقت",
     amsDate: "التاريخ",
     amsFrom: "من",
     amsTo: "إلى",
-    amsFetch: "تسجيل الدخول وجلب الجدول",
-    amsFetching: "جاري تسجيل الدخول…",
-    amsHint: "تسجيل دخول AMS عادي. كلمة المرور لا تُحفظ في هذا الموقع.",
+    amsFetch: "جلب الجدول",
+    amsFetching: "جاري الجلب…",
+    amsHint: "يستخدم بيانات الدخول المحفوظة في الإعدادات.",
     missionRecentTitle: "آخر 10 جداول",
     missionRecentNote: "محفوظة عالمياً على السيرفر",
     missionRecentEmpty: "لا توجد جداول محفوظة بعد",
@@ -304,10 +323,10 @@ const I18N = {
       save_failed: "تعذر حفظ الجدول.",
       not_found: "الجدول المحفوظ غير موجود.",
       file_too_large: "حجم الملف كبير جداً.",
-      need_credentials: "أدخل اسم المستخدم وكلمة المرور.",
+      need_credentials: "افتح الإعدادات وأدخل اسم المستخدم وكلمة المرور، أو الصق رمز الجلسة.",
       need_datetime: "اختر التاريخ ونطاق الوقت.",
-      login_failed: "فشل دخول AMS. تحقق من اسم المستخدم وكلمة المرور.",
-      login_no_token: "لم يُرجع AMS جلسة صالحة.",
+      login_failed: "فشل دخول AMS. تحقق من البيانات في الإعدادات، أو الصق X-AMSAuthorization من جلسة متصفح AMS.",
+      login_no_token: "لم يُرجع AMS جلسة صالحة. الصق X-AMSAuthorization من أدوات المطوّر في الإعدادات.",
       ams_unreachable: "تعذر الوصول إلى AMS.",
       ams_fetch_failed: "تعذر جلب جدول الرحلات من AMS.",
       ams_empty: "لا توجد رحلات في هذا النطاق الزمني.",
@@ -907,9 +926,77 @@ function setMissionMode(mode) {
     const dateEl = document.getElementById("amsDate");
     if (dateEl && !dateEl.value) {
       const now = new Date();
-      dateEl.value = now.toISOString().slice(0, 10);
+      const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+      dateEl.value = local.toISOString().slice(0, 10);
     }
+    loadAmsSettingsIntoForm();
+    const when = document.getElementById("amsWhen");
+    if (when) when.open = true;
   }
+}
+
+function loadAmsSettings() {
+  try {
+    return JSON.parse(localStorage.getItem(AMS_SETTINGS_KEY) || "{}") || {};
+  } catch (_) {
+    return {};
+  }
+}
+
+function saveAmsSettingsFromForm(event) {
+  if (event) event.preventDefault();
+  const data = {
+    username: (document.getElementById("amsUser").value || "").trim(),
+    password: document.getElementById("amsPass").value || "",
+    airport: (document.getElementById("amsAirport").value || "MCT").trim().toUpperCase() || "MCT",
+    token: (document.getElementById("amsToken").value || "").trim(),
+  };
+  localStorage.setItem(AMS_SETTINGS_KEY, JSON.stringify(data));
+  showMissionStatus(t().amsSettingsSaved, false);
+}
+
+function clearAmsSettings() {
+  localStorage.removeItem(AMS_SETTINGS_KEY);
+  ["amsUser", "amsPass", "amsToken"].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.value = "";
+  });
+  const airport = document.getElementById("amsAirport");
+  if (airport) airport.value = "MCT";
+  setAmsPassVisible(false);
+}
+
+function loadAmsSettingsIntoForm() {
+  const data = loadAmsSettings();
+  const user = document.getElementById("amsUser");
+  const pass = document.getElementById("amsPass");
+  const airport = document.getElementById("amsAirport");
+  const token = document.getElementById("amsToken");
+  if (user && data.username != null) user.value = data.username;
+  if (pass && data.password != null) pass.value = data.password;
+  if (airport) airport.value = data.airport || "MCT";
+  if (token && data.token != null) token.value = data.token;
+}
+
+function setAmsPassVisible(show) {
+  const pass = document.getElementById("amsPass");
+  const token = document.getElementById("amsToken");
+  const btn = document.getElementById("amsShowPass");
+  if (!pass || !btn) return;
+  pass.type = show ? "text" : "password";
+  if (token) token.type = show ? "text" : "password";
+  btn.setAttribute("aria-pressed", show ? "true" : "false");
+  btn.textContent = show ? t().amsHidePass : t().amsShowPass;
+}
+
+function toggleAmsSettings() {
+  const panel = document.getElementById("amsSettingsPanel");
+  const btn = document.getElementById("amsSettingsBtn");
+  if (!panel || !btn) return;
+  const open = panel.hidden;
+  panel.hidden = !open;
+  btn.setAttribute("aria-expanded", open ? "true" : "false");
+  if (open) loadAmsSettingsIntoForm();
 }
 
 function amsRangeIso() {
@@ -919,18 +1006,25 @@ function amsRangeIso() {
   if (!date) return null;
   return {
     from: `${date}T${from}:00`,
-    to: `${date}T${to}:00`,
+    to: `${date}T${to}:59`,
   };
 }
 
 async function fetchMissionFromAms(event) {
   if (event) event.preventDefault();
-  const user = (document.getElementById("amsUser").value || "").trim();
-  const pass = document.getElementById("amsPass").value || "";
-  const airport = (document.getElementById("amsAirport").value || "MCT").trim();
+  loadAmsSettingsIntoForm();
+  const settings = {
+    username: (document.getElementById("amsUser").value || "").trim(),
+    password: document.getElementById("amsPass").value || "",
+    airport: (document.getElementById("amsAirport").value || "MCT").trim(),
+    token: (document.getElementById("amsToken").value || "").trim(),
+  };
+  localStorage.setItem(AMS_SETTINGS_KEY, JSON.stringify(settings));
   const range = amsRangeIso();
-  if (!user || !pass) {
+  if (!settings.token && (!settings.username || !settings.password)) {
     showMissionError("need_credentials");
+    const panel = document.getElementById("amsSettingsPanel");
+    if (panel) panel.hidden = false;
     return;
   }
   if (!range) {
@@ -949,9 +1043,10 @@ async function fetchMissionFromAms(event) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        username: user,
-        password: pass,
-        airport,
+        username: settings.username,
+        password: settings.password,
+        token: settings.token,
+        airport: settings.airport,
         from: range.from,
         to: range.to,
       }),
@@ -962,6 +1057,10 @@ async function fetchMissionFromAms(event) {
     } catch (_) {}
     if (!res.ok) {
       showMissionError((data && data.error) || "ams_unreachable");
+      if (((data && data.error) || "").indexOf("login") === 0) {
+        const panel = document.getElementById("amsSettingsPanel");
+        if (panel) panel.hidden = false;
+      }
       return;
     }
     if (!data || !data.rows || data.rows.length < 2) {
@@ -970,10 +1069,11 @@ async function fetchMissionFromAms(event) {
     }
     missionFile = null;
     missionParsed = { sheetName: data.sheetName || "TrackingGrid", rows: data.rows };
-    document.getElementById("amsPass").value = "";
     renderMissionPreview(missionParsed.rows);
     showMissionStatus(ui.missionFormatReady, false);
     paintMissionFile();
+    const when = document.getElementById("amsWhen");
+    if (when) when.open = false;
   } catch (_) {
     showMissionError("ams_unreachable");
   } finally {
@@ -1551,6 +1651,20 @@ document.querySelectorAll(".mission-mode").forEach((btn) => {
 });
 const amsForm = document.getElementById("amsForm");
 if (amsForm) amsForm.addEventListener("submit", fetchMissionFromAms);
+const amsSettingsForm = document.getElementById("amsSettingsForm");
+if (amsSettingsForm) amsSettingsForm.addEventListener("submit", saveAmsSettingsFromForm);
+const amsSettingsBtn = document.getElementById("amsSettingsBtn");
+if (amsSettingsBtn) amsSettingsBtn.addEventListener("click", toggleAmsSettings);
+const amsShowPass = document.getElementById("amsShowPass");
+if (amsShowPass) {
+  amsShowPass.addEventListener("click", () => {
+    const show = amsShowPass.getAttribute("aria-pressed") !== "true";
+    setAmsPassVisible(show);
+  });
+}
+const amsClearSettings = document.getElementById("amsClearSettings");
+if (amsClearSettings) amsClearSettings.addEventListener("click", clearAmsSettings);
+loadAmsSettingsIntoForm();
 
 compareBtn.addEventListener("click", compareNow);
 demoBtn.addEventListener("click", loadDemo);

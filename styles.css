@@ -615,6 +615,13 @@ body.view-mission .actions .btn.primary {
 body.view-mission .top {
   align-items: flex-start;
 }
+.mission-top-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
 
 .mission-modes {
   display: flex;
@@ -640,6 +647,118 @@ body.view-mission .top {
   background: var(--card);
   color: var(--navy);
   box-shadow: 0 1px 2px rgba(28, 25, 21, 0.06);
+}
+
+.ams-settings {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+.ams-settings-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 12px;
+}
+.ams-settings-form label {
+  display: grid;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 600;
+}
+.ams-settings-form .ams-token-field {
+  grid-column: 1 / -1;
+}
+.ams-settings-form input {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 9px 11px;
+  font: inherit;
+  color: var(--ink);
+  background: #fff;
+  width: 100%;
+  box-sizing: border-box;
+}
+.ams-pass-row {
+  display: flex;
+  gap: 6px;
+  align-items: stretch;
+}
+.ams-pass-row input {
+  flex: 1;
+  min-width: 0;
+}
+.ams-show-pass {
+  flex-shrink: 0;
+  padding-inline: 12px;
+}
+.ams-settings-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+@media (max-width: 640px) {
+  .ams-settings-form { grid-template-columns: 1fr; }
+}
+
+.ams-when {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--card);
+  padding: 0;
+}
+.ams-when > summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 12px 14px;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--navy);
+  user-select: none;
+}
+.ams-when > summary::-webkit-details-marker { display: none; }
+.ams-when > summary::after {
+  content: "▾";
+  float: inline-end;
+  color: var(--muted);
+  font-weight: 600;
+}
+.ams-when[open] > summary::after { content: "▴"; }
+.ams-when-form {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px 12px;
+  padding: 0 14px 14px;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+}
+.ams-when-form label {
+  display: grid;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 600;
+}
+.ams-when-form input {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 9px 11px;
+  font: inherit;
+  color: var(--ink);
+  background: #fff;
+}
+.ams-when-form #amsFetchBtn {
+  grid-column: 1 / -1;
+  justify-self: start;
+  margin-top: 2px;
+}
+@media (max-width: 640px) {
+  .ams-when-form { grid-template-columns: 1fr; }
 }
 
 .ams-form {
