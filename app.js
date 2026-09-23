@@ -17,19 +17,20 @@ const ACTIVE_KEY = "activeFlightId";
 const DB_NAME = "booklistFlights";
 const DB_VERSION = 2;
 const MISSION_MAX = 10;
-const SAMPLE_PLAN = "FligtLoadPlan_V1_WY171_MCTAMS_08Sep2026.pdf";
-const SAMPLE_BOOK = "Book List.pdf";
 const API_ROOT = (function () {
   var host = location.hostname || "";
   if (host === "book-list.158-220-106-38.sslip.io" || location.port === "8022") return "";
   if (/\.(netlify\.app|web\.app|firebaseapp\.com)$/i.test(host)) return "";
-  // GitHub Pages (nasq-booking) — Mission formats in-browser; cargo API still uses VPS when reachable.
+  // GitHub Pages — cargo API uses VPS; AMS prefers local Flask when available (airport network).
   return "https://book-list.158-220-106-38.sslip.io";
 })();
-const MISSION_KEEP = ["Dep Flt", "Airline Name", "Status", "Nature", "Dest.", "STD", "Dep Stand"];
-const EXCELJS_CDN = "https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js";
+const LOCAL_API = "http://127.0.0.1:8022";
 const AMS_TRACKING_URL = "https://ams-web.omanairports.co.om/#trackingGrid";
 const AMS_SETTINGS_KEY = "amsMissionSettings";
+const SAMPLE_PLAN = "FligtLoadPlan_V1_WY171_MCTAMS_08Sep2026.pdf";
+const SAMPLE_BOOK = "Book List.pdf";
+const MISSION_KEEP = ["Dep Flt", "Airline Name", "Status", "Nature", "Dest.", "STD", "Dep Stand"];
+const EXCELJS_CDN = "https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js";
 const AWB_PREFIX = "910";
 const PRESETS = [
   "https://www.google.com/search?q={flight}+{date}",
@@ -69,7 +70,7 @@ const I18N = {
     amsToken: "Session token (optional)",
     amsSaveSettings: "Save",
     amsClearSettings: "Clear saved",
-    amsSettingsHint: "Saved on this device only. If password login fails, open AMS, sign in, copy X-AMSAuthorization from DevTools, and paste it here.",
+    amsSettingsHint: "Saved on this device only. AMS is on the airport network — run serve.ps1 locally (port 8022), then fetch. If password login fails, paste X-AMSAuthorization from AMS DevTools.",
     amsSettingsSaved: "Settings saved",
     amsWhenTitle: "Date & time",
     amsDate: "Date",
@@ -77,7 +78,7 @@ const I18N = {
     amsTo: "To",
     amsFetch: "Fetch table",
     amsFetching: "Fetching…",
-    amsHint: "Uses the credentials saved in Settings.",
+    amsHint: "Uses Settings above. Needs local server on the airport network.",
     missionRecentTitle: "Last 10 tables",
     missionRecentNote: "Saved globally on the server",
     missionRecentEmpty: "No saved tables yet",
@@ -178,7 +179,7 @@ const I18N = {
       need_datetime: "Choose a date and time range.",
       login_failed: "AMS login failed. Check credentials in Settings, or paste X-AMSAuthorization from an AMS browser session.",
       login_no_token: "AMS login did not return a session. Paste X-AMSAuthorization from DevTools in Settings.",
-      ams_unreachable: "Could not reach AMS.",
+      ams_unreachable: "Cannot reach AMS from this server. On the airport network run: powershell -ExecutionPolicy Bypass -File .\\serve.ps1 then fetch again (or open http://127.0.0.1:8022/).",
       ams_fetch_failed: "Could not fetch the flight table from AMS.",
       ams_empty: "No flights found for that time range.",
       ams_unexpected_shape: "AMS returned data in an unexpected format.",
@@ -218,7 +219,7 @@ const I18N = {
     amsToken: "رمز الجلسة (اختياري)",
     amsSaveSettings: "حفظ",
     amsClearSettings: "مسح المحفوظ",
-    amsSettingsHint: "تُحفظ على هذا الجهاز فقط. إذا فشل الدخول بكلمة المرور: افتح AMS وسجّل الدخول، انسخ X-AMSAuthorization من أدوات المطوّر والصقه هنا.",
+    amsSettingsHint: "تُحفظ على هذا الجهاز فقط. AMS على شبكة المطار — شغّل serve.ps1 محلياً (منفذ 8022) ثم اجلب. إذا فشل الدخول: الصق X-AMSAuthorization من أدوات المطوّر في AMS.",
     amsSettingsSaved: "تم حفظ الإعدادات",
     amsWhenTitle: "التاريخ والوقت",
     amsDate: "التاريخ",
@@ -226,7 +227,7 @@ const I18N = {
     amsTo: "إلى",
     amsFetch: "جلب الجدول",
     amsFetching: "جاري الجلب…",
-    amsHint: "يستخدم بيانات الدخول المحفوظة في الإعدادات.",
+    amsHint: "يستخدم الإعدادات أعلاه. يتطلب السيرفر المحلي على شبكة المطار.",
     missionRecentTitle: "آخر 10 جداول",
     missionRecentNote: "محفوظة عالمياً على السيرفر",
     missionRecentEmpty: "لا توجد جداول محفوظة بعد",
@@ -327,7 +328,7 @@ const I18N = {
       need_datetime: "اختر التاريخ ونطاق الوقت.",
       login_failed: "فشل دخول AMS. تحقق من البيانات في الإعدادات، أو الصق X-AMSAuthorization من جلسة متصفح AMS.",
       login_no_token: "لم يُرجع AMS جلسة صالحة. الصق X-AMSAuthorization من أدوات المطوّر في الإعدادات.",
-      ams_unreachable: "تعذر الوصول إلى AMS.",
+      ams_unreachable: "لا يمكن الوصول إلى AMS من هذا السيرفر. على شبكة المطار شغّل: powershell -ExecutionPolicy Bypass -File .\\serve.ps1 ثم أعد الجلب (أو افتح http://127.0.0.1:8022/).",
       ams_fetch_failed: "تعذر جلب جدول الرحلات من AMS.",
       ams_empty: "لا توجد رحلات في هذا النطاق الزمني.",
       ams_unexpected_shape: "بيانات AMS بصيغة غير متوقعة.",
@@ -1010,6 +1011,21 @@ function amsRangeIso() {
   };
 }
 
+async function resolveAmsApiRoot() {
+  // Prefer local Flask when the PC can reach AMS (airport network).
+  if (location.port === "8022" || location.hostname === "127.0.0.1" || location.hostname === "localhost") {
+    return "";
+  }
+  try {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 900);
+    const res = await fetch(`${LOCAL_API}/api/mission/tables`, { signal: ctrl.signal });
+    clearTimeout(timer);
+    if (res.ok) return LOCAL_API;
+  } catch (_) {}
+  return API_ROOT;
+}
+
 async function fetchMissionFromAms(event) {
   if (event) event.preventDefault();
   loadAmsSettingsIntoForm();
@@ -1039,7 +1055,8 @@ async function fetchMissionFromAms(event) {
   clearMissionPreview();
   paintMissionFile();
   try {
-    const res = await fetch(`${API_ROOT}/api/mission/ams-fetch`, {
+    const root = await resolveAmsApiRoot();
+    const res = await fetch(`${root}/api/mission/ams-fetch`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

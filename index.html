@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=33" />
+  <link rel="stylesheet" href="styles.css?v=34" />
   <script>
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.getRegistrations().then(function (regs) {
@@ -187,7 +187,7 @@
               <button type="button" class="btn ghost" id="amsClearSettings" data-i18n="amsClearSettings">Clear saved</button>
             </div>
           </form>
-          <p class="hint" data-i18n="amsSettingsHint">Saved on this device only. If login fails, open AMS, sign in, then paste the X-AMSAuthorization token here.</p>
+          <p class="hint" data-i18n="amsSettingsHint">Saved on this device only. AMS needs the airport network — run serve.ps1 locally, then fetch. If login fails, paste X-AMSAuthorization from AMS DevTools.</p>
         </div>
 
         <div id="missionUploadPanel">
@@ -220,7 +220,7 @@
               <button type="submit" class="btn primary" id="amsFetchBtn" data-i18n="amsFetch">Fetch table</button>
             </form>
           </details>
-          <p class="hint" data-i18n="amsHint">Uses the credentials from Settings above.</p>
+          <p class="hint" data-i18n="amsHint">Uses the credentials from Settings above. Needs local server on the airport network.</p>
         </div>
 
         <div class="actions">
@@ -250,6 +250,6 @@
       </section>
     </div>
   </div>
-  <script src="app.js?v=33"></script>
+  <script src="app.js?v=34"></script>
 </body>
 </html>
