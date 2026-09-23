@@ -605,6 +605,17 @@ body.view-mission .actions .btn.primary {
   min-width: 7.5rem;
 }
 
+.ams-link {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+body.view-mission .top {
+  align-items: flex-start;
+}
+
 .mission-recent {
   display: grid;
   gap: 10px;

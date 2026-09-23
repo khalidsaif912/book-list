@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=29" />
+  <link rel="stylesheet" href="styles.css?v=30" />
   <script>
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.getRegistrations().then(function (regs) {
@@ -147,8 +147,9 @@
       <header class="top">
         <div>
           <h1 data-i18n="missionTitle">Mission</h1>
-          <p class="lead" data-i18n="missionLead">Upload the raw flight table. Format it, print it, or download it.</p>
+          <p class="lead" data-i18n="missionLead">Upload the raw flight table. It formats first, then print becomes available.</p>
         </div>
+        <a class="btn ghost ams-link" id="amsLink" href="https://ams-web.omanairports.co.om/#trackingGrid" target="_blank" rel="noopener" data-i18n="missionOpenAms">Open AMS</a>
       </header>
 
       <section class="desk" id="missionDesk">
@@ -187,6 +188,6 @@
       </section>
     </div>
   </div>
-  <script src="app.js?v=27"></script>
+  <script src="app.js?v=28"></script>
 </body>
 </html>

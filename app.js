@@ -28,6 +28,7 @@ const API_ROOT = (function () {
 })();
 const MISSION_KEEP = ["Dep Flt", "Airline Name", "Status", "Nature", "Dest.", "STD", "Dep Stand"];
 const EXCELJS_CDN = "https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js";
+const AMS_TRACKING_URL = "https://ams-web.omanairports.co.om/#trackingGrid";
 const AWB_PREFIX = "910";
 const PRESETS = [
   "https://www.google.com/search?q={flight}+{date}",
@@ -55,6 +56,7 @@ const I18N = {
     missionPreviewTitle: "Formatted preview",
     missionPreviewCount: (n) => `${n} flights`,
     missionFormatReady: "Formatted — print is ready",
+    missionOpenAms: "Open AMS",
     missionRecentTitle: "Last 10 tables",
     missionRecentNote: "Saved globally on the server",
     missionRecentEmpty: "No saved tables yet",
@@ -175,6 +177,7 @@ const I18N = {
     missionPreviewTitle: "معاينة منسّقة",
     missionPreviewCount: (n) => `${n} رحلة`,
     missionFormatReady: "تم التنسيق — الطباعة جاهزة",
+    missionOpenAms: "فتح AMS",
     missionRecentTitle: "آخر 10 جداول",
     missionRecentNote: "محفوظة عالمياً على السيرفر",
     missionRecentEmpty: "لا توجد جداول محفوظة بعد",
@@ -774,6 +777,8 @@ function bindRosterLinks() {
     const el = document.getElementById(id);
     if (el) el.href = href;
   });
+  const ams = document.getElementById("amsLink");
+  if (ams) ams.href = AMS_TRACKING_URL;
 }
 
 function applyLang() {
