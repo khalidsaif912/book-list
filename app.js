@@ -57,6 +57,17 @@ const I18N = {
     missionPreviewCount: (n) => `${n} flights`,
     missionFormatReady: "Formatted — print is ready",
     missionOpenAms: "Open AMS",
+    missionModeUpload: "Upload file",
+    missionModeAms: "AMS login",
+    amsUser: "Username",
+    amsPass: "Password",
+    amsAirport: "Airport",
+    amsDate: "Date",
+    amsFrom: "From",
+    amsTo: "To",
+    amsFetch: "Sign in & fetch",
+    amsFetching: "Signing in…",
+    amsHint: "Normal AMS login. Password is not saved on this site.",
     missionRecentTitle: "Last 10 tables",
     missionRecentNote: "Saved globally on the server",
     missionRecentEmpty: "No saved tables yet",
@@ -153,6 +164,14 @@ const I18N = {
       save_failed: "Could not save the table.",
       not_found: "Saved table not found.",
       file_too_large: "File is too large.",
+      need_credentials: "Enter username and password.",
+      need_datetime: "Choose a date and time range.",
+      login_failed: "AMS login failed. Check username and password.",
+      login_no_token: "AMS login did not return a session.",
+      ams_unreachable: "Could not reach AMS.",
+      ams_fetch_failed: "Could not fetch the flight table from AMS.",
+      ams_empty: "No flights found for that time range.",
+      ams_unexpected_shape: "AMS returned data in an unexpected format.",
       invalid_awb: "Invalid AWB number.",
       track_unreachable: "Could not reach Oman Air Cargo tracking.",
       track_failed: "Could not fetch tracking.",
@@ -178,6 +197,17 @@ const I18N = {
     missionPreviewCount: (n) => `${n} رحلة`,
     missionFormatReady: "تم التنسيق — الطباعة جاهزة",
     missionOpenAms: "فتح AMS",
+    missionModeUpload: "رفع ملف",
+    missionModeAms: "دخول AMS",
+    amsUser: "اسم المستخدم",
+    amsPass: "كلمة المرور",
+    amsAirport: "المطار",
+    amsDate: "التاريخ",
+    amsFrom: "من",
+    amsTo: "إلى",
+    amsFetch: "تسجيل الدخول وجلب الجدول",
+    amsFetching: "جاري تسجيل الدخول…",
+    amsHint: "تسجيل دخول AMS عادي. كلمة المرور لا تُحفظ في هذا الموقع.",
     missionRecentTitle: "آخر 10 جداول",
     missionRecentNote: "محفوظة عالمياً على السيرفر",
     missionRecentEmpty: "لا توجد جداول محفوظة بعد",
@@ -274,6 +304,14 @@ const I18N = {
       save_failed: "تعذر حفظ الجدول.",
       not_found: "الجدول المحفوظ غير موجود.",
       file_too_large: "حجم الملف كبير جداً.",
+      need_credentials: "أدخل اسم المستخدم وكلمة المرور.",
+      need_datetime: "اختر التاريخ ونطاق الوقت.",
+      login_failed: "فشل دخول AMS. تحقق من اسم المستخدم وكلمة المرور.",
+      login_no_token: "لم يُرجع AMS جلسة صالحة.",
+      ams_unreachable: "تعذر الوصول إلى AMS.",
+      ams_fetch_failed: "تعذر جلب جدول الرحلات من AMS.",
+      ams_empty: "لا توجد رحلات في هذا النطاق الزمني.",
+      ams_unexpected_shape: "بيانات AMS بصيغة غير متوقعة.",
       invalid_awb: "رقم البوليصة غير صالح.",
       track_unreachable: "تعذر الاتصال بتتبع الطيران العماني للشحن.",
       track_failed: "تعذر جلب التتبع.",
@@ -295,6 +333,7 @@ let missionFile = null;
 let missionParsed = null;
 let missionRecent = [];
 let missionStatusTimer = null;
+let missionMode = "upload";
 
 function t() {
   return I18N[lang];
@@ -843,15 +882,103 @@ function paintMissionFile() {
   if (missionFile) {
     el.textContent = missionFile.name;
     el.classList.add("ok");
-    clearBtn.hidden = false;
-    formatBtn.disabled = !ready;
-    printBtn.disabled = !ready;
+  } else if (ready && missionMode === "ams") {
+    el.textContent = t().missionModeAms;
+    el.classList.add("ok");
   } else {
     el.textContent = t().missionFileIdle;
     el.classList.remove("ok");
-    clearBtn.hidden = true;
-    formatBtn.disabled = true;
-    printBtn.disabled = true;
+  }
+  clearBtn.hidden = !(missionFile || ready);
+  formatBtn.disabled = !ready;
+  printBtn.disabled = !ready;
+}
+
+function setMissionMode(mode) {
+  missionMode = mode === "ams" ? "ams" : "upload";
+  document.querySelectorAll(".mission-mode").forEach((btn) => {
+    btn.classList.toggle("active", btn.dataset.missionMode === missionMode);
+  });
+  const uploadPanel = document.getElementById("missionUploadPanel");
+  const amsPanel = document.getElementById("missionAmsPanel");
+  if (uploadPanel) uploadPanel.hidden = missionMode !== "upload";
+  if (amsPanel) amsPanel.hidden = missionMode !== "ams";
+  if (missionMode === "ams") {
+    const dateEl = document.getElementById("amsDate");
+    if (dateEl && !dateEl.value) {
+      const now = new Date();
+      dateEl.value = now.toISOString().slice(0, 10);
+    }
+  }
+}
+
+function amsRangeIso() {
+  const date = document.getElementById("amsDate").value;
+  const from = document.getElementById("amsFrom").value || "00:00";
+  const to = document.getElementById("amsTo").value || "23:59";
+  if (!date) return null;
+  return {
+    from: `${date}T${from}:00`,
+    to: `${date}T${to}:00`,
+  };
+}
+
+async function fetchMissionFromAms(event) {
+  if (event) event.preventDefault();
+  const user = (document.getElementById("amsUser").value || "").trim();
+  const pass = document.getElementById("amsPass").value || "";
+  const airport = (document.getElementById("amsAirport").value || "MCT").trim();
+  const range = amsRangeIso();
+  if (!user || !pass) {
+    showMissionError("need_credentials");
+    return;
+  }
+  if (!range) {
+    showMissionError("need_datetime");
+    return;
+  }
+  const btn = document.getElementById("amsFetchBtn");
+  const ui = t();
+  btn.disabled = true;
+  btn.textContent = ui.amsFetching;
+  showMissionError(null);
+  clearMissionPreview();
+  paintMissionFile();
+  try {
+    const res = await fetch(`${API_ROOT}/api/mission/ams-fetch`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: user,
+        password: pass,
+        airport,
+        from: range.from,
+        to: range.to,
+      }),
+    });
+    let data = null;
+    try {
+      data = await res.json();
+    } catch (_) {}
+    if (!res.ok) {
+      showMissionError((data && data.error) || "ams_unreachable");
+      return;
+    }
+    if (!data || !data.rows || data.rows.length < 2) {
+      showMissionError("ams_empty");
+      return;
+    }
+    missionFile = null;
+    missionParsed = { sheetName: data.sheetName || "TrackingGrid", rows: data.rows };
+    document.getElementById("amsPass").value = "";
+    renderMissionPreview(missionParsed.rows);
+    showMissionStatus(ui.missionFormatReady, false);
+    paintMissionFile();
+  } catch (_) {
+    showMissionError("ams_unreachable");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = ui.amsFetch;
   }
 }
 
@@ -1149,6 +1276,8 @@ function clearMissionFile() {
   missionFile = null;
   clearMissionPreview();
   document.getElementById("missionFileInput").value = "";
+  const pass = document.getElementById("amsPass");
+  if (pass) pass.value = "";
   showMissionError(null);
   paintMissionFile();
 }
@@ -1336,20 +1465,24 @@ function setMissionBusy(busy, label) {
 }
 
 async function formatMissionNow() {
-  if (!missionFile) {
-    showMissionError("need_files");
-    return;
+  if (!missionParsed || !missionParsed.rows) {
+    if (!missionFile) {
+      showMissionError("need_files");
+      return;
+    }
   }
   setMissionBusy(true, "download");
   showMissionError(null);
   try {
-    if (!missionParsed) {
+    if (!missionParsed && missionFile) {
       await prepareMissionFormat();
     }
     if (!missionParsed) return;
     const blob = await buildMissionWorkbook(missionParsed.sheetName, missionParsed.rows);
-    const name = missionFile.name.replace(/\.(xlsx|xlsm)$/i, "") + "_formatted.xlsx";
-    downloadBlob(blob, name);
+    const base = missionFile
+      ? missionFile.name.replace(/\.(xlsx|xlsm)$/i, "")
+      : `AMS_${new Date().toISOString().slice(0, 10)}`;
+    downloadBlob(blob, `${base}_formatted.xlsx`);
   } catch (err) {
     showMissionError(err && err.code ? err.code : "format_failed", err && err.columns);
   } finally {
@@ -1413,6 +1546,11 @@ missionFileInput.addEventListener("change", () => {
 document.getElementById("missionFormatBtn").addEventListener("click", formatMissionNow);
 document.getElementById("missionPrintBtn").addEventListener("click", printMissionNow);
 document.getElementById("missionClearBtn").addEventListener("click", clearMissionFile);
+document.querySelectorAll(".mission-mode").forEach((btn) => {
+  btn.addEventListener("click", () => setMissionMode(btn.dataset.missionMode));
+});
+const amsForm = document.getElementById("amsForm");
+if (amsForm) amsForm.addEventListener("submit", fetchMissionFromAms);
 
 compareBtn.addEventListener("click", compareNow);
 demoBtn.addEventListener("click", loadDemo);
@@ -1610,6 +1748,7 @@ function renderTable() {
 loadTrack();
 bindRosterLinks();
 setView(activeView);
+setMissionMode("upload");
 applyLang();
 setRailOpen(true);
 refreshSavedFlights()

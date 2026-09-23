@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=30" />
+  <link rel="stylesheet" href="styles.css?v=31" />
   <script>
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.getRegistrations().then(function (regs) {
@@ -153,14 +153,53 @@
       </header>
 
       <section class="desk" id="missionDesk">
-        <label class="drop" id="missionDrop">
-          <input id="missionFileInput" type="file" accept=".xlsx,.xlsm,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden />
-          <strong data-i18n="missionDropStrong">Drop the unformatted flight table</strong>
-          <span data-i18n="missionDropHint">Excel (.xlsx) — or click to choose</span>
-        </label>
-        <div class="filebar">
-          <span id="missionFileName" data-i18n="missionFileIdle">No file yet</span>
+        <div class="mission-modes" role="tablist" aria-label="Mission source">
+          <button type="button" class="mission-mode active" data-mission-mode="upload" data-i18n="missionModeUpload">Upload file</button>
+          <button type="button" class="mission-mode" data-mission-mode="ams" data-i18n="missionModeAms">AMS login</button>
         </div>
+
+        <div id="missionUploadPanel">
+          <label class="drop" id="missionDrop">
+            <input id="missionFileInput" type="file" accept=".xlsx,.xlsm,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden />
+            <strong data-i18n="missionDropStrong">Drop the unformatted flight table</strong>
+            <span data-i18n="missionDropHint">Excel (.xlsx) — or click to choose</span>
+          </label>
+          <div class="filebar">
+            <span id="missionFileName" data-i18n="missionFileIdle">No file yet</span>
+          </div>
+        </div>
+
+        <div id="missionAmsPanel" hidden>
+          <form class="ams-form" id="amsForm" autocomplete="on">
+            <label>
+              <span data-i18n="amsUser">Username</span>
+              <input id="amsUser" name="username" type="text" autocomplete="username" required dir="ltr" />
+            </label>
+            <label>
+              <span data-i18n="amsPass">Password</span>
+              <input id="amsPass" name="password" type="password" autocomplete="current-password" required dir="ltr" />
+            </label>
+            <label>
+              <span data-i18n="amsAirport">Airport</span>
+              <input id="amsAirport" name="airport" type="text" value="MCT" maxlength="4" dir="ltr" />
+            </label>
+            <label>
+              <span data-i18n="amsDate">Date</span>
+              <input id="amsDate" name="date" type="date" required />
+            </label>
+            <label>
+              <span data-i18n="amsFrom">From</span>
+              <input id="amsFrom" name="from" type="time" value="00:00" required />
+            </label>
+            <label>
+              <span data-i18n="amsTo">To</span>
+              <input id="amsTo" name="to" type="time" value="23:59" required />
+            </label>
+            <button type="submit" class="btn primary" id="amsFetchBtn" data-i18n="amsFetch">Sign in &amp; fetch</button>
+          </form>
+          <p class="hint" data-i18n="amsHint">Uses a normal AMS login. Password is not saved.</p>
+        </div>
+
         <div class="actions">
           <button type="button" class="btn primary" id="missionPrintBtn" data-i18n="missionPrint" disabled>Print</button>
           <button type="button" class="btn ghost" id="missionFormatBtn" data-i18n="missionFormat" disabled>Format &amp; download</button>
@@ -188,6 +227,6 @@
       </section>
     </div>
   </div>
-  <script src="app.js?v=28"></script>
+  <script src="app.js?v=29"></script>
 </body>
 </html>
