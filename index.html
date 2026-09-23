@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=34" />
+  <link rel="stylesheet" href="styles.css?v=36" />
   <script>
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.getRegistrations().then(function (regs) {
@@ -174,6 +174,12 @@
                 <button type="button" class="btn ghost ams-show-pass" id="amsShowPass" aria-pressed="false" data-i18n="amsShowPass">Show</button>
               </div>
             </label>
+            <div class="ams-settings-actions ams-login-row">
+              <button type="submit" class="btn primary" id="amsLoginBtn" data-i18n="amsLogin">Sign in</button>
+              <button type="button" class="btn ghost" id="amsSaveSettings" data-i18n="amsSaveSettings">Save only</button>
+              <button type="button" class="btn ghost" id="amsClearSettings" data-i18n="amsClearSettings">Clear saved</button>
+            </div>
+            <p class="ams-login-status" id="amsLoginStatus" hidden></p>
             <label>
               <span data-i18n="amsAirport">Airport</span>
               <input id="amsAirport" name="airport" type="text" value="MCT" maxlength="4" dir="ltr" />
@@ -182,12 +188,8 @@
               <span data-i18n="amsToken">Session token (optional)</span>
               <input id="amsToken" name="token" type="password" autocomplete="off" dir="ltr" placeholder="X-AMSAuthorization" />
             </label>
-            <div class="ams-settings-actions">
-              <button type="submit" class="btn primary" id="amsSaveSettings" data-i18n="amsSaveSettings">Save</button>
-              <button type="button" class="btn ghost" id="amsClearSettings" data-i18n="amsClearSettings">Clear saved</button>
-            </div>
           </form>
-          <p class="hint" data-i18n="amsSettingsHint">Saved on this device only. AMS needs the airport network — run serve.ps1 locally, then fetch. If login fails, paste X-AMSAuthorization from AMS DevTools.</p>
+          <p class="hint" data-i18n="amsSettingsHint">Sign in saves your session on this device. Needs local server on the airport network (serve.ps1). If login fails, paste X-AMSAuthorization below.</p>
         </div>
 
         <div id="missionUploadPanel">
@@ -250,6 +252,6 @@
       </section>
     </div>
   </div>
-  <script src="app.js?v=34"></script>
+  <script src="app.js?v=36"></script>
 </body>
 </html>

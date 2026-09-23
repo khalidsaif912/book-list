@@ -702,6 +702,17 @@ body.view-mission .top {
   flex-wrap: wrap;
   align-items: center;
 }
+.ams-login-row {
+  margin-top: 2px;
+}
+.ams-login-status {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+.ams-login-status.is-ok { color: var(--go); }
+.ams-login-status.is-error { color: var(--bad, #b42318); }
 @media (max-width: 640px) {
   .ams-settings-form { grid-template-columns: 1fr; }
 }

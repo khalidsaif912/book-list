@@ -68,9 +68,12 @@ const I18N = {
     amsHidePass: "Hide",
     amsAirport: "Airport",
     amsToken: "Session token (optional)",
-    amsSaveSettings: "Save",
+    amsLogin: "Sign in",
+    amsLoggingIn: "Signing in…",
+    amsLoginOk: "Signed in — choose date & time, then fetch the table",
+    amsSaveSettings: "Save only",
     amsClearSettings: "Clear saved",
-    amsSettingsHint: "Saved on this device only. AMS is on the airport network — run serve.ps1 locally (port 8022), then fetch. If password login fails, paste X-AMSAuthorization from AMS DevTools.",
+    amsSettingsHint: "Sign in saves your session on this device. Needs local server on the airport network (serve.ps1). If login fails, paste X-AMSAuthorization below.",
     amsSettingsSaved: "Settings saved",
     amsWhenTitle: "Date & time",
     amsDate: "Date",
@@ -217,9 +220,12 @@ const I18N = {
     amsHidePass: "إخفاء",
     amsAirport: "المطار",
     amsToken: "رمز الجلسة (اختياري)",
-    amsSaveSettings: "حفظ",
+    amsLogin: "تسجيل الدخول",
+    amsLoggingIn: "جاري تسجيل الدخول…",
+    amsLoginOk: "تم الدخول — اختر التاريخ والوقت ثم اجلب الجدول",
+    amsSaveSettings: "حفظ فقط",
     amsClearSettings: "مسح المحفوظ",
-    amsSettingsHint: "تُحفظ على هذا الجهاز فقط. AMS على شبكة المطار — شغّل serve.ps1 محلياً (منفذ 8022) ثم اجلب. إذا فشل الدخول: الصق X-AMSAuthorization من أدوات المطوّر في AMS.",
+    amsSettingsHint: "تسجيل الدخول يحفظ الجلسة على هذا الجهاز. يتطلب السيرفر المحلي على شبكة المطار (serve.ps1). إذا فشل الدخول: الصق X-AMSAuthorization أدناه.",
     amsSettingsSaved: "تم حفظ الإعدادات",
     amsWhenTitle: "التاريخ والوقت",
     amsDate: "التاريخ",
@@ -933,6 +939,10 @@ function setMissionMode(mode) {
     loadAmsSettingsIntoForm();
     const when = document.getElementById("amsWhen");
     if (when) when.open = true;
+    const panel = document.getElementById("amsSettingsPanel");
+    const settingsBtn = document.getElementById("amsSettingsBtn");
+    if (panel) panel.hidden = false;
+    if (settingsBtn) settingsBtn.setAttribute("aria-expanded", "true");
   }
 }
 
@@ -944,16 +954,95 @@ function loadAmsSettings() {
   }
 }
 
-function saveAmsSettingsFromForm(event) {
-  if (event) event.preventDefault();
-  const data = {
+function collectAmsSettingsFromForm() {
+  return {
     username: (document.getElementById("amsUser").value || "").trim(),
     password: document.getElementById("amsPass").value || "",
     airport: (document.getElementById("amsAirport").value || "MCT").trim().toUpperCase() || "MCT",
     token: (document.getElementById("amsToken").value || "").trim(),
   };
+}
+
+function saveAmsSettingsFromForm(event) {
+  if (event) event.preventDefault();
+  const data = collectAmsSettingsFromForm();
   localStorage.setItem(AMS_SETTINGS_KEY, JSON.stringify(data));
   showMissionStatus(t().amsSettingsSaved, false);
+}
+
+function setAmsLoginStatus(message, isError) {
+  const el = document.getElementById("amsLoginStatus");
+  if (!el) return;
+  if (!message) {
+    el.hidden = true;
+    el.textContent = "";
+    el.classList.remove("is-error", "is-ok");
+    return;
+  }
+  el.hidden = false;
+  el.textContent = message;
+  el.classList.toggle("is-error", !!isError);
+  el.classList.toggle("is-ok", !isError);
+}
+
+async function loginAmsFromSettings(event) {
+  if (event) event.preventDefault();
+  const settings = collectAmsSettingsFromForm();
+  localStorage.setItem(AMS_SETTINGS_KEY, JSON.stringify(settings));
+  if (!settings.token && (!settings.username || !settings.password)) {
+    showMissionError("need_credentials");
+    setAmsLoginStatus(t().errors.need_credentials, true);
+    return;
+  }
+  const btn = document.getElementById("amsLoginBtn");
+  const ui = t();
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = ui.amsLoggingIn;
+  }
+  showMissionError(null);
+  setAmsLoginStatus(ui.amsLoggingIn, false);
+  try {
+    const root = await resolveAmsApiRoot();
+    const res = await fetch(`${root}/api/mission/ams-login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: settings.username,
+        password: settings.password,
+        token: settings.token,
+      }),
+    });
+    let data = null;
+    try {
+      data = await res.json();
+    } catch (_) {}
+    if (!res.ok || !data || !data.ok) {
+      const err = (data && data.error) || "login_failed";
+      showMissionError(err);
+      setAmsLoginStatus((ui.errors && ui.errors[err]) || err, true);
+      return;
+    }
+    if (data.token) {
+      settings.token = data.token;
+      const tokenEl = document.getElementById("amsToken");
+      if (tokenEl) tokenEl.value = data.token;
+      localStorage.setItem(AMS_SETTINGS_KEY, JSON.stringify(settings));
+    }
+    setAmsLoginStatus(ui.amsLoginOk, false);
+    showMissionStatus(ui.amsLoginOk, false);
+    setMissionMode("ams");
+    const when = document.getElementById("amsWhen");
+    if (when) when.open = true;
+  } catch (_) {
+    showMissionError("ams_unreachable");
+    setAmsLoginStatus(ui.errors.ams_unreachable, true);
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = ui.amsLogin;
+    }
+  }
 }
 
 function clearAmsSettings() {
@@ -1669,7 +1758,9 @@ document.querySelectorAll(".mission-mode").forEach((btn) => {
 const amsForm = document.getElementById("amsForm");
 if (amsForm) amsForm.addEventListener("submit", fetchMissionFromAms);
 const amsSettingsForm = document.getElementById("amsSettingsForm");
-if (amsSettingsForm) amsSettingsForm.addEventListener("submit", saveAmsSettingsFromForm);
+if (amsSettingsForm) amsSettingsForm.addEventListener("submit", loginAmsFromSettings);
+const amsSaveSettings = document.getElementById("amsSaveSettings");
+if (amsSaveSettings) amsSaveSettings.addEventListener("click", saveAmsSettingsFromForm);
 const amsSettingsBtn = document.getElementById("amsSettingsBtn");
 if (amsSettingsBtn) amsSettingsBtn.addEventListener("click", toggleAmsSettings);
 const amsShowPass = document.getElementById("amsShowPass");
