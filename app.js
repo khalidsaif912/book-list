@@ -42,8 +42,8 @@ const I18N = {
     lead: "The Load Plan is the source. Upload both files to see what is booked and what is not.",
     tabCargo: "Cargo matching",
     tabMission: "Mission",
-    installApp: "Install app",
-    installAppDone: "Installed",
+    installApp: "Install",
+    installAppDone: "Done",
     installAppHint: "Use the browser menu: Install app / Add to Home Screen",
     missionTitle: "Mission",
     missionLead: "Upload the raw flight table. It formats first, then print becomes available.",
@@ -166,7 +166,7 @@ const I18N = {
     lead: "الأساس هو خطة التحميل. ارفع الملفين لمعرفة ما حُجز وما لم يُحجز.",
     tabCargo: "مطابقة الشحنات",
     tabMission: "مهمة",
-    installApp: "تثبيت التطبيق",
+    installApp: "تثبيت",
     installAppDone: "مثبّت",
     installAppHint: "من قائمة المتصفح: تثبيت التطبيق / إضافة إلى الشاشة الرئيسية",
     missionTitle: "مهمة",
@@ -1710,6 +1710,8 @@ function paintInstallAppBtn() {
     btn.disabled = installed;
     btn.title = label;
     btn.setAttribute("aria-label", label);
+    const text = btn.querySelector("[data-i18n='installApp']") || btn.querySelector("span");
+    if (text) text.textContent = label;
   }
   if (mini) {
     mini.hidden = false;

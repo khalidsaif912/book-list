@@ -186,14 +186,15 @@ body.rail-collapsed .rail-inner { display: none; }
 }
 .rail-actions {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 1fr 1fr;
   gap: 8px;
   align-items: center;
 }
 .rail-foot .lang-btn,
-.rail-foot .roster-btn {
+.rail-foot .roster-btn,
+.rail-foot .install-app-btn {
   width: 100%;
-  min-height: 40px;
+  min-height: 36px;
   border-radius: 12px;
   display: inline-flex;
   align-items: center;
@@ -201,7 +202,7 @@ body.rail-collapsed .rail-inner { display: none; }
   gap: 6px;
   font-size: 12px;
   font-weight: 600;
-  padding: 8px 10px;
+  padding: 7px 10px;
   text-decoration: none;
   box-sizing: border-box;
 }
@@ -218,43 +219,22 @@ body.rail-collapsed .rail-inner { display: none; }
   color: var(--navy);
 }
 .rail-foot .roster-btn:hover { background: #fff; }
-.rail-foot .roster-btn svg { flex-shrink: 0; }
+.rail-foot .roster-btn svg,
+.rail-foot .install-app-btn svg { flex-shrink: 0; }
 .rail-foot .install-app-btn {
-  width: 40px;
-  height: 40px;
-  min-height: 40px;
-  padding: 0;
   border: 0;
-  border-radius: 12px;
   background: #00aba9;
   color: #fff;
   cursor: pointer;
   font: inherit;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  flex-shrink: 0;
 }
 .rail-foot .install-app-btn:hover { filter: brightness(1.06); }
-.rail-foot .install-app-btn img {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: #fff;
-  object-fit: cover;
-  flex-shrink: 0;
-}
 .rail-foot .install-app-btn[hidden] { display: none !important; }
 .rail-foot .install-app-btn.is-installed {
   background: rgba(246,239,227,0.16);
+  color: #f6efe3;
   cursor: default;
   filter: none;
-}
-.rail-foot .install-app-btn.is-installed img { opacity: 0.9; }
-/* When install is hidden, roster spans full row */
-.rail-actions:has(.install-app-btn[hidden]) {
-  grid-template-columns: 1fr;
 }
 .rail-sign {
   margin: 12px 0 2px;
@@ -302,17 +282,11 @@ body.rail-collapsed .rail-inner { display: none; }
   padding: 0;
 }
 .roster-mini { background: #f6efe3; color: var(--navy); border-color: transparent; }
-.install-mini { background: #00aba9; border-color: transparent; }
-.install-mini img {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: #fff;
-  object-fit: cover;
-}
+.install-mini { background: #00aba9; border-color: transparent; color: #fff; }
 .install-mini[hidden] { display: none !important; }
 .install-mini.is-installed {
   background: rgba(246,239,227,0.16);
+  color: #f6efe3;
   cursor: default;
 }
 body.rail-collapsed .rail-mini-actions { display: flex; }
