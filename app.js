@@ -55,6 +55,7 @@ const I18N = {
     missionPreviewTitle: "Formatted preview",
     missionPreviewCount: (n) => `${n} flights`,
     missionFormatReady: "Formatted — print is ready",
+    missionPrintDateLabel: "Printed",
     missionRecentTitle: "Last 10 tables",
     missionRecentNote: "Saved globally on the server",
     missionRecentEmpty: "No saved tables yet",
@@ -175,6 +176,7 @@ const I18N = {
     missionPreviewTitle: "معاينة منسّقة",
     missionPreviewCount: (n) => `${n} رحلة`,
     missionFormatReady: "تم التنسيق — الطباعة جاهزة",
+    missionPrintDateLabel: "تاريخ الطباعة",
     missionRecentTitle: "آخر 10 جداول",
     missionRecentNote: "محفوظة عالمياً على السيرفر",
     missionRecentEmpty: "لا توجد جداول محفوظة بعد",
@@ -856,6 +858,33 @@ function paintMissionFile() {
   printBtn.disabled = !ready;
 }
 
+function formatMissionPrintStamp(when) {
+  const d = when instanceof Date ? when : new Date();
+  const locale = lang === "ar" ? "ar-OM" : "en-GB";
+  try {
+    const datePart = d.toLocaleDateString(locale, {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+    const timePart = d.toLocaleTimeString(locale, {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    return `${datePart}  ·  ${timePart}`;
+  } catch (_) {
+    return d.toISOString().slice(0, 16).replace("T", " ");
+  }
+}
+
+function missionPrintMastheadHtml(cols) {
+  const label = escapeHtml(t().missionPrintDateLabel);
+  const stamp = escapeHtml(formatMissionPrintStamp(new Date()));
+  const n = Math.max(1, cols | 0);
+  return `<tr class="mission-print-date"><td colspan="${n}"><span class="mission-print-date-label">${label}</span><span class="mission-print-date-stamp">${stamp}</span></td></tr>`;
+}
+
 function clearMissionPreview() {
   missionParsed = null;
   const box = document.getElementById("missionPreview");
@@ -872,7 +901,9 @@ function renderMissionPreview(rows) {
   const count = document.getElementById("missionPreviewCount");
   if (!box || !table) return;
   const esc = escapeHtml;
-  const thead = `<thead><tr>${rows[0].map((h) => `<th>${esc(h)}</th>`).join("")}</tr></thead>`;
+  const cols = rows[0] ? rows[0].length : 1;
+  const dateRow = missionPrintMastheadHtml(cols);
+  const thead = `<thead>${dateRow}<tr>${rows[0].map((h) => `<th>${esc(h)}</th>`).join("")}</tr></thead>`;
   const tbody = `<tbody>${rows
     .slice(1)
     .map((row) => `<tr>${row.map((c) => `<td>${esc(c)}</td>`).join("")}</tr>`)
@@ -1266,23 +1297,50 @@ function downloadBlob(blob, name) {
 
 function printMissionRows(rows) {
   const esc = escapeHtml;
-  const thead = `<tr>${rows[0].map((h) => `<th>${esc(h)}</th>`).join("")}</tr>`;
+  const cols = rows[0] ? rows[0].length : 1;
+  const dateRow = missionPrintMastheadHtml(cols);
+  const thead = `${dateRow}<tr>${rows[0].map((h) => `<th>${esc(h)}</th>`).join("")}</tr>`;
   const tbody = rows
     .slice(1)
     .map((row) => `<tr>${row.map((c) => `<td>${esc(c)}</td>`).join("")}</tr>`)
     .join("");
   const html = `<!DOCTYPE html>
-<html>
+<html lang="${lang === "ar" ? "ar" : "en"}" dir="${lang === "ar" ? "rtl" : "ltr"}">
 <head>
 <meta charset="UTF-8" />
 <title>Mission</title>
 <style>
   @page { size: A4 landscape; margin: 10mm; }
-  html, body { margin: 0; padding: 0; background: #fff; color: #000; }
-  body { font-family: Calibri, Arial, sans-serif; font-size: 11pt; }
+  html, body { margin: 0; padding: 0; background: #fff; color: #111; }
+  body { font-family: "Segoe UI", Calibri, Arial, sans-serif; font-size: 11pt; }
   table { border-collapse: collapse; width: 100%; }
-  th, td { border: 1px solid #000; padding: 3px 6px; text-align: left; vertical-align: middle; }
+  th, td { border: 1px solid #111; padding: 3px 6px; text-align: start; vertical-align: middle; }
   th { background: #ffff00; font-weight: bold; text-align: center; }
+  tr.mission-print-date td {
+    border: 1px solid #111;
+    border-bottom: 2px solid #111;
+    background: linear-gradient(180deg, #f7f4ef 0%, #efe8dc 100%);
+    padding: 10px 14px;
+    text-align: center;
+  }
+  .mission-print-date-label {
+    display: inline-block;
+    font-size: 9pt;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #5c5346;
+    margin-inline-end: 0.85rem;
+    padding-inline-end: 0.85rem;
+    border-inline-end: 1px solid #c4b8a5;
+  }
+  .mission-print-date-stamp {
+    display: inline-block;
+    font-size: 12pt;
+    font-weight: 600;
+    color: #1c1915;
+    letter-spacing: 0.02em;
+  }
 </style>
 </head>
 <body>
@@ -1310,7 +1368,6 @@ function printMissionRows(rows) {
   setTimeout(() => {
     win.onafterprint = cleanup;
     win.print();
-    // Fallback if afterprint never fires (some browsers).
     setTimeout(cleanup, 2000);
   }, 50);
 }
