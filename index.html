@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=41" />
+  <link rel="stylesheet" href="styles.css?v=42" />
   <script>
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.getRegistrations().then(function (regs) {
@@ -149,54 +149,9 @@
           <h1 data-i18n="missionTitle">Mission</h1>
           <p class="lead" data-i18n="missionLead">Upload the raw flight table. It formats first, then print becomes available.</p>
         </div>
-        <div class="mission-top-actions">
-          <button type="button" class="btn ghost" id="amsSettingsBtn" data-i18n="amsSettings" aria-expanded="false">Settings</button>
-          <a class="btn ghost ams-link" id="amsLink" href="https://ams-web.omanairports.co.om/#trackingGrid" target="_blank" rel="noopener" data-i18n="missionOpenAms">Open AMS</a>
-        </div>
       </header>
 
       <section class="desk" id="missionDesk">
-        <div class="mission-modes" role="tablist" aria-label="Mission source">
-          <button type="button" class="mission-mode active" data-mission-mode="upload" data-i18n="missionModeUpload">Upload file</button>
-          <button type="button" class="mission-mode" data-mission-mode="ams" data-i18n="missionModeAms">AMS login</button>
-        </div>
-
-        <div class="ams-settings" id="amsSettingsPanel" hidden>
-          <form class="ams-settings-form" id="amsSettingsForm" autocomplete="on">
-            <label>
-              <span data-i18n="amsUser">Username</span>
-              <input id="amsUser" name="username" type="text" autocomplete="username" dir="ltr" />
-            </label>
-            <label class="ams-pass-field">
-              <span data-i18n="amsPass">Password</span>
-              <div class="ams-pass-row">
-                <input id="amsPass" name="password" type="password" autocomplete="current-password" dir="ltr" />
-                <button type="button" class="btn ghost ams-show-pass" id="amsShowPass" aria-pressed="false" data-i18n="amsShowPass">Show</button>
-              </div>
-            </label>
-            <div class="ams-settings-actions ams-login-row">
-              <button type="submit" class="btn primary" id="amsLoginBtn" data-i18n="amsLogin">Sign in</button>
-              <button type="button" class="btn ghost" id="amsSaveSettings" data-i18n="amsSaveSettings">Save only</button>
-              <button type="button" class="btn ghost" id="amsClearSettings" data-i18n="amsClearSettings">Clear saved</button>
-            </div>
-            <p class="ams-login-status" id="amsLoginStatus" hidden></p>
-            <label>
-              <span data-i18n="amsAirport">Airport</span>
-              <input id="amsAirport" name="airport" type="text" value="MCT" maxlength="4" dir="ltr" />
-            </label>
-            <label class="ams-token-field">
-              <span data-i18n="amsToken">Session token (optional)</span>
-              <input id="amsToken" name="token" type="password" autocomplete="off" dir="ltr" placeholder="X-AMSAuthorization" />
-            </label>
-            <label class="ams-proxy-field">
-              <span data-i18n="amsProxy">Work server URL</span>
-              <input id="amsProxy" name="proxy" type="url" autocomplete="off" dir="ltr" placeholder="http://127.0.0.1:8022" />
-            </label>
-          </form>
-          <p class="hint" data-i18n="amsProxyHint">Usually http://127.0.0.1:8022 on this computer</p>
-          <p class="hint" data-i18n="amsSettingsHint">Sign in saves the session on this device. Your PC can reach AMS; GitHub Pages cannot — run تشغيل.bat (or open http://127.0.0.1:8022/). If login fails, paste X-AMSAuthorization.</p>
-        </div>
-
         <div id="missionUploadPanel">
           <label class="drop" id="missionDrop">
             <input id="missionFileInput" type="file" accept=".xlsx,.xlsm,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden />
@@ -206,42 +161,6 @@
           <div class="filebar">
             <span id="missionFileName" data-i18n="missionFileIdle">No file yet</span>
           </div>
-        </div>
-
-        <div id="missionAmsPanel" hidden>
-          <div class="ams-work-card" id="amsWorkCard">
-            <p class="ams-work-lead" data-i18n="amsWorkLead">جلب الرحلات من AMS بدون تثبيت أي برنامج:</p>
-            <ol class="ams-work-steps">
-              <li data-i18n="amsWorkStep1">من هذا الموقع: اسحب الزر «Book List ← AMS» إلى شريط المفضلة أعلى المتصفح.</li>
-              <li data-i18n="amsWorkStep2">افتح AMS من الزر أدناه وسجّل دخولك كالعادة.</li>
-              <li data-i18n="amsWorkStep3">ارجع لتبويب AMS، اضغط من المفضلة على «Book List ← AMS»، اختر التاريخ، وسيظهر الجدول هنا.</li>
-            </ol>
-            <div class="ams-work-actions">
-              <a class="btn ghost ams-bookmarklet" id="amsBookmarklet" href="#" title="اسحب إلى المفضلة" data-i18n="amsBookmarklet">Book List ← AMS</a>
-              <a class="btn primary" id="amsOpenSite" href="https://ams-web.omanairports.co.om/#trackingGrid" target="_blank" rel="noopener" data-i18n="missionOpenAms">Open AMS</a>
-            </div>
-            <p class="hint ams-drag-tip" data-i18n="amsDragTip">اسحبني إلى المفضلة</p>
-            <p class="hint" data-i18n="amsBookmarkHint">لا يظهر شريط المفضلة؟ من قائمة المتصفح: المفضلة → إظهار شريط المفضلة. أو من AMS صدّر Excel ثم ارفعه من «رفع ملف».</p>
-          </div>
-          <details class="ams-when" id="amsWhen">
-            <summary data-i18n="amsWhenTitle">Date &amp; time (needs PC helper)</summary>
-            <form class="ams-when-form" id="amsForm">
-              <label>
-                <span data-i18n="amsDate">Date</span>
-                <input id="amsDate" name="date" type="date" required />
-              </label>
-              <label>
-                <span data-i18n="amsFrom">From</span>
-                <input id="amsFrom" name="from" type="time" value="00:00" required />
-              </label>
-              <label>
-                <span data-i18n="amsTo">To</span>
-                <input id="amsTo" name="to" type="time" value="23:59" required />
-              </label>
-              <button type="submit" class="btn primary" id="amsFetchBtn" data-i18n="amsFetch">Fetch table</button>
-            </form>
-            <p class="hint" data-i18n="amsHint">Optional if you can run a local helper. Prefer the AMS bookmark above at work.</p>
-          </details>
         </div>
 
         <div class="actions">
@@ -271,6 +190,6 @@
       </section>
     </div>
   </div>
-  <script src="app.js?v=41"></script>
+  <script src="app.js?v=42"></script>
 </body>
 </html>

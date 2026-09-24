@@ -21,12 +21,9 @@ const API_ROOT = (function () {
   var host = location.hostname || "";
   if (host === "book-list.158-220-106-38.sslip.io" || location.port === "8022") return "";
   if (/\.(netlify\.app|web\.app|firebaseapp\.com)$/i.test(host)) return "";
-  // GitHub Pages — cargo API uses VPS; AMS must use a helper on this PC (VPS cannot reach AMS).
+  // GitHub Pages — cargo API uses VPS when reachable.
   return "https://book-list.158-220-106-38.sslip.io";
 })();
-const LOCAL_API = "http://127.0.0.1:8022";
-const AMS_TRACKING_URL = "https://ams-web.omanairports.co.om/#trackingGrid";
-const AMS_SETTINGS_KEY = "amsMissionSettings";
 const SAMPLE_PLAN = "FligtLoadPlan_V1_WY171_MCTAMS_08Sep2026.pdf";
 const SAMPLE_BOOK = "Book List.pdf";
 const MISSION_KEEP = ["Dep Flt", "Airline Name", "Status", "Nature", "Dest.", "STD", "Dep Stand"];
@@ -58,43 +55,6 @@ const I18N = {
     missionPreviewTitle: "Formatted preview",
     missionPreviewCount: (n) => `${n} flights`,
     missionFormatReady: "Formatted — print is ready",
-    missionOpenAms: "Open AMS",
-    missionModeUpload: "Upload file",
-    missionModeAms: "AMS",
-    amsSettings: "Settings",
-    amsUser: "Username",
-    amsPass: "Password",
-    amsShowPass: "Show",
-    amsHidePass: "Hide",
-    amsAirport: "Airport",
-    amsToken: "Session token (optional)",
-    amsLogin: "Sign in",
-    amsLoggingIn: "Signing in…",
-    amsLoginOk: "Signed in — choose date & time, then fetch the table",
-    amsSaveSettings: "Save only",
-    amsClearSettings: "Clear saved",
-    amsSettingsHint: "Optional PC helper only. At work use the AMS bookmark (no install). If needed, paste X-AMSAuthorization.",
-    amsSettingsSaved: "Settings saved",
-    amsWhenTitle: "Date & time (needs PC helper)",
-    amsDate: "Date",
-    amsFrom: "From",
-    amsTo: "To",
-    amsFetch: "Fetch table",
-    amsFetching: "Fetching…",
-    amsHint: "Optional if you can run a local helper. Prefer the AMS bookmark above at work.",
-    amsOpenLocal: "Open AMS helper (this PC)",
-    amsLocalRunning: "Helper on this PC connected",
-    amsLocalMissing: "Local helper not running",
-    amsProxy: "Helper server URL",
-    amsProxyHint: "Usually http://127.0.0.1:8022 — only if a helper is allowed on this PC",
-    amsWorkLead: "Get flights from AMS without installing anything:",
-    amsWorkStep1: "On this site: drag the green “Book List ← AMS” button up to the bookmarks bar.",
-    amsWorkStep2: "Open AMS with the button below and sign in as usual.",
-    amsWorkStep3: "While on the AMS tab: click “Book List ← AMS” in bookmarks, pick the date, then wait for the table here.",
-    amsBookmarklet: "Book List ← AMS",
-    amsBookmarkHint: "No bookmarks bar? Browser menu → Bookmarks → Show bookmarks bar. Or export Excel from AMS and use Upload file.",
-    amsBridgeOk: "Received flights from AMS",
-    amsDragTip: "Drag me to bookmarks",
     missionRecentTitle: "Last 10 tables",
     missionRecentNote: "Saved globally on the server",
     missionRecentEmpty: "No saved tables yet",
@@ -191,15 +151,6 @@ const I18N = {
       save_failed: "Could not save the table.",
       not_found: "Saved table not found.",
       file_too_large: "File is too large.",
-      need_credentials: "Open Settings and enter username/password, or paste a session token.",
-      need_datetime: "Choose a date and time range.",
-      login_failed: "AMS login failed. Check credentials in Settings, or paste X-AMSAuthorization from an AMS browser session.",
-      login_no_token: "AMS login did not return a session. Paste X-AMSAuthorization from DevTools in Settings.",
-      ams_unreachable: "Cloud helper unavailable. At work use the AMS bookmark (Book List ← AMS) or upload an Excel export.",
-      ams_need_local: "At work use the AMS bookmark — no .bat needed. Or upload TrackingGrid Excel.",
-      ams_fetch_failed: "Could not fetch the flight table from AMS.",
-      ams_empty: "No flights found for that time range.",
-      ams_unexpected_shape: "AMS returned data in an unexpected format.",
       invalid_awb: "Invalid AWB number.",
       track_unreachable: "Could not reach Oman Air Cargo tracking.",
       track_failed: "Could not fetch tracking.",
@@ -224,43 +175,6 @@ const I18N = {
     missionPreviewTitle: "معاينة منسّقة",
     missionPreviewCount: (n) => `${n} رحلة`,
     missionFormatReady: "تم التنسيق — الطباعة جاهزة",
-    missionOpenAms: "فتح AMS",
-    missionModeUpload: "رفع ملف",
-    missionModeAms: "AMS",
-    amsSettings: "إعدادات",
-    amsUser: "اسم المستخدم",
-    amsPass: "كلمة المرور",
-    amsShowPass: "إظهار",
-    amsHidePass: "إخفاء",
-    amsAirport: "المطار",
-    amsToken: "رمز الجلسة (اختياري)",
-    amsLogin: "تسجيل الدخول",
-    amsLoggingIn: "جاري تسجيل الدخول…",
-    amsLoginOk: "تم الدخول — اختر التاريخ والوقت ثم اجلب الجدول",
-    amsSaveSettings: "حفظ فقط",
-    amsClearSettings: "مسح المحفوظ",
-    amsSettingsHint: "المساعد على الجهاز اختياري. في العمل استخدم أداة المفضلة من AMS (بدون تثبيت). عند الحاجة الصق X-AMSAuthorization.",
-    amsSettingsSaved: "تم حفظ الإعدادات",
-    amsWhenTitle: "التاريخ والوقت (يحتاج مساعد على الجهاز)",
-    amsDate: "التاريخ",
-    amsFrom: "من",
-    amsTo: "إلى",
-    amsFetch: "جلب الجدول",
-    amsFetching: "جاري الجلب…",
-    amsHint: "اختياري إن أمكن تشغيل مساعد محلي. في العمل فضّل أداة المفضلة أعلاه.",
-    amsOpenLocal: "فتح مساعد AMS (هذا الجهاز)",
-    amsLocalRunning: "المساعد على هذا الجهاز متصل",
-    amsLocalMissing: "المساعد المحلي غير شغّال",
-    amsProxy: "عنوان المساعد",
-    amsProxyHint: "عادةً http://127.0.0.1:8022 — فقط إن سُمح بمساعد على الجهاز",
-    amsWorkLead: "جلب الرحلات من AMS بدون تثبيت أي برنامج:",
-    amsWorkStep1: "من هذا الموقع: اسحب الزر «Book List ← AMS» إلى شريط المفضلة أعلى المتصفح.",
-    amsWorkStep2: "افتح AMS من الزر أدناه وسجّل دخولك كالعادة.",
-    amsWorkStep3: "ارجع لتبويب AMS، اضغط من المفضلة على «Book List ← AMS»، اختر التاريخ، وسيظهر الجدول هنا.",
-    amsBookmarklet: "Book List ← AMS",
-    amsBookmarkHint: "لا يظهر شريط المفضلة؟ من قائمة المتصفح: المفضلة → إظهار شريط المفضلة. أو من AMS صدّر Excel ثم ارفعه من «رفع ملف».",
-    amsBridgeOk: "تم استلام الرحلات من AMS",
-    amsDragTip: "اسحبني إلى المفضلة",
     missionRecentTitle: "آخر 10 جداول",
     missionRecentNote: "محفوظة عالمياً على السيرفر",
     missionRecentEmpty: "لا توجد جداول محفوظة بعد",
@@ -357,15 +271,6 @@ const I18N = {
       save_failed: "تعذر حفظ الجدول.",
       not_found: "الجدول المحفوظ غير موجود.",
       file_too_large: "حجم الملف كبير جداً.",
-      need_credentials: "افتح الإعدادات وأدخل اسم المستخدم وكلمة المرور، أو الصق رمز الجلسة.",
-      need_datetime: "اختر التاريخ ونطاق الوقت.",
-      login_failed: "فشل دخول AMS. تحقق من البيانات في الإعدادات، أو الصق X-AMSAuthorization من جلسة متصفح AMS.",
-      login_no_token: "لم يُرجع AMS جلسة صالحة. الصق X-AMSAuthorization من أدوات المطوّر في الإعدادات.",
-      ams_unreachable: "المساعد السحابي غير متاح. في العمل استخدم مفضلة AMS (Book List ← AMS) أو ارفع ملف Excel.",
-      ams_need_local: "في العمل استخدم مفضلة AMS — بدون ملفات .bat. أو ارفع Excel من TrackingGrid.",
-      ams_fetch_failed: "تعذر جلب جدول الرحلات من AMS.",
-      ams_empty: "لا توجد رحلات في هذا النطاق الزمني.",
-      ams_unexpected_shape: "بيانات AMS بصيغة غير متوقعة.",
       invalid_awb: "رقم البوليصة غير صالح.",
       track_unreachable: "تعذر الاتصال بتتبع الطيران العماني للشحن.",
       track_failed: "تعذر جلب التتبع.",
@@ -387,7 +292,6 @@ let missionFile = null;
 let missionParsed = null;
 let missionRecent = [];
 let missionStatusTimer = null;
-let missionMode = "upload";
 
 function t() {
   return I18N[lang];
@@ -870,8 +774,6 @@ function bindRosterLinks() {
     const el = document.getElementById(id);
     if (el) el.href = href;
   });
-  const ams = document.getElementById("amsLink");
-  if (ams) ams.href = AMS_TRACKING_URL;
 }
 
 function applyLang() {
@@ -945,9 +847,6 @@ function paintMissionFile() {
   if (missionFile) {
     el.textContent = missionFile.name;
     el.classList.add("ok");
-  } else if (ready && missionMode === "ams") {
-    el.textContent = t().missionModeAms;
-    el.classList.add("ok");
   } else {
     el.textContent = t().missionFileIdle;
     el.classList.remove("ok");
@@ -955,348 +854,6 @@ function paintMissionFile() {
   clearBtn.hidden = !(missionFile || ready);
   formatBtn.disabled = !ready;
   printBtn.disabled = !ready;
-}
-
-function setMissionMode(mode) {
-  missionMode = mode === "ams" ? "ams" : "upload";
-  document.querySelectorAll(".mission-mode").forEach((btn) => {
-    btn.classList.toggle("active", btn.dataset.missionMode === missionMode);
-  });
-  const uploadPanel = document.getElementById("missionUploadPanel");
-  const amsPanel = document.getElementById("missionAmsPanel");
-  if (uploadPanel) uploadPanel.hidden = missionMode !== "upload";
-  if (amsPanel) amsPanel.hidden = missionMode !== "ams";
-  if (missionMode === "ams") {
-    const dateEl = document.getElementById("amsDate");
-    if (dateEl && !dateEl.value) {
-      const now = new Date();
-      const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
-      dateEl.value = local.toISOString().slice(0, 10);
-    }
-    loadAmsSettingsIntoForm();
-    const when = document.getElementById("amsWhen");
-    if (when) when.open = true;
-    const panel = document.getElementById("amsSettingsPanel");
-    const settingsBtn = document.getElementById("amsSettingsBtn");
-    if (panel) panel.hidden = false;
-    if (settingsBtn) settingsBtn.setAttribute("aria-expanded", "true");
-    refreshAmsLocalBanner();
-  }
-}
-
-function loadAmsSettings() {
-  try {
-    return JSON.parse(localStorage.getItem(AMS_SETTINGS_KEY) || "{}") || {};
-  } catch (_) {
-    return {};
-  }
-}
-
-function collectAmsSettingsFromForm() {
-  const proxyEl = document.getElementById("amsProxy");
-  let proxy = proxyEl ? (proxyEl.value || "").trim() : "";
-  if (proxy) proxy = proxy.replace(/\/+$/, "");
-  return {
-    username: (document.getElementById("amsUser").value || "").trim(),
-    password: document.getElementById("amsPass").value || "",
-    airport: (document.getElementById("amsAirport").value || "MCT").trim().toUpperCase() || "MCT",
-    token: (document.getElementById("amsToken").value || "").trim(),
-    proxy: proxy || LOCAL_API,
-  };
-}
-
-function saveAmsSettingsFromForm(event) {
-  if (event) event.preventDefault();
-  const data = collectAmsSettingsFromForm();
-  localStorage.setItem(AMS_SETTINGS_KEY, JSON.stringify(data));
-  showMissionStatus(t().amsSettingsSaved, false);
-}
-
-function setAmsLoginStatus(message, isError) {
-  const el = document.getElementById("amsLoginStatus");
-  if (!el) return;
-  if (!message) {
-    el.hidden = true;
-    el.textContent = "";
-    el.classList.remove("is-error", "is-ok");
-    return;
-  }
-  el.hidden = false;
-  el.textContent = message;
-  el.classList.toggle("is-error", !!isError);
-  el.classList.toggle("is-ok", !isError);
-}
-
-async function loginAmsFromSettings(event) {
-  if (event) event.preventDefault();
-  const settings = collectAmsSettingsFromForm();
-  localStorage.setItem(AMS_SETTINGS_KEY, JSON.stringify(settings));
-  if (!settings.token && (!settings.username || !settings.password)) {
-    showMissionError("need_credentials");
-    setAmsLoginStatus(t().errors.need_credentials, true);
-    return;
-  }
-  const btn = document.getElementById("amsLoginBtn");
-  const ui = t();
-  if (btn) {
-    btn.disabled = true;
-    btn.textContent = ui.amsLoggingIn;
-  }
-  showMissionError(null);
-  setAmsLoginStatus(ui.amsLoggingIn, false);
-  try {
-    const root = await resolveAmsApiRoot();
-    const res = await fetch(`${root}/api/mission/ams-login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username: settings.username,
-        password: settings.password,
-        token: settings.token,
-      }),
-    });
-    let data = null;
-    try {
-      data = await res.json();
-    } catch (_) {}
-    if (!res.ok || !data || !data.ok) {
-      const err = (data && data.error) || "login_failed";
-      showMissionError(err);
-      setAmsLoginStatus((ui.errors && ui.errors[err]) || err, true);
-      return;
-    }
-    if (data.token) {
-      settings.token = data.token;
-      const tokenEl = document.getElementById("amsToken");
-      if (tokenEl) tokenEl.value = data.token;
-      localStorage.setItem(AMS_SETTINGS_KEY, JSON.stringify(settings));
-    }
-    setAmsLoginStatus(ui.amsLoginOk, false);
-    showMissionStatus(ui.amsLoginOk, false);
-    setMissionMode("ams");
-    const when = document.getElementById("amsWhen");
-    if (when) when.open = true;
-  } catch (err) {
-    const code = (err && err.code) || (err && err.message) || "ams_unreachable";
-    const key = code === "ams_need_local" ? "ams_need_local" : "ams_unreachable";
-    showMissionError(key);
-    setAmsLoginStatus((ui.errors && ui.errors[key]) || key, true);
-  } finally {
-    if (btn) {
-      btn.disabled = false;
-      btn.textContent = ui.amsLogin;
-    }
-  }
-}
-
-function clearAmsSettings() {
-  localStorage.removeItem(AMS_SETTINGS_KEY);
-  ["amsUser", "amsPass", "amsToken"].forEach((id) => {
-    const el = document.getElementById(id);
-    if (el) el.value = "";
-  });
-  const airport = document.getElementById("amsAirport");
-  if (airport) airport.value = "MCT";
-  const proxy = document.getElementById("amsProxy");
-  if (proxy) proxy.value = LOCAL_API;
-  setAmsPassVisible(false);
-}
-
-function loadAmsSettingsIntoForm() {
-  const data = loadAmsSettings();
-  const user = document.getElementById("amsUser");
-  const pass = document.getElementById("amsPass");
-  const airport = document.getElementById("amsAirport");
-  const token = document.getElementById("amsToken");
-  const proxy = document.getElementById("amsProxy");
-  if (user && data.username != null) user.value = data.username;
-  if (pass && data.password != null) pass.value = data.password;
-  if (airport) airport.value = data.airport || "MCT";
-  if (token && data.token != null) token.value = data.token;
-  if (proxy) proxy.value = data.proxy || LOCAL_API;
-}
-
-function getAmsProxyBase() {
-  const data = loadAmsSettings();
-  const fromForm = document.getElementById("amsProxy");
-  let proxy = (fromForm && fromForm.value) || data.proxy || LOCAL_API;
-  proxy = String(proxy || LOCAL_API).trim().replace(/\/+$/, "");
-  return proxy || LOCAL_API;
-}
-
-async function resolveAmsApiRoot() {
-  // Same machine / LAN Book List server: use relative URLs.
-  if (location.port === "8022" || location.hostname === "127.0.0.1" || location.hostname === "localhost") {
-    return "";
-  }
-  // Also treat "we are already on the work server" (LAN IP serving this app).
-  if (location.protocol === "http:" && location.port === "8022") {
-    return "";
-  }
-  const candidates = [];
-  const preferred = getAmsProxyBase();
-  if (preferred) candidates.push(preferred);
-  if (LOCAL_API && candidates.indexOf(LOCAL_API) === -1) candidates.push(LOCAL_API);
-
-  for (let i = 0; i < candidates.length; i++) {
-    const base = candidates[i];
-    try {
-      const ctrl = new AbortController();
-      const timer = setTimeout(() => ctrl.abort(), 2000);
-      const res = await fetch(`${base}/api/mission/tables`, {
-        signal: ctrl.signal,
-        cache: "no-store",
-      });
-      clearTimeout(timer);
-      if (res.ok) return base;
-    } catch (_) {}
-  }
-  const err = new Error("ams_need_local");
-  err.code = "ams_need_local";
-  throw err;
-}
-
-function isRemoteMissionHost() {
-  const host = location.hostname || "";
-  return host.indexOf("github.io") !== -1 || host.indexOf("sslip.io") !== -1;
-}
-
-async function refreshAmsLocalBanner() {
-  const banner = document.getElementById("amsLocalBanner");
-  if (!banner) return;
-  if (!isRemoteMissionHost()) {
-    banner.hidden = true;
-    return;
-  }
-  banner.hidden = false;
-  const status = document.getElementById("amsLocalStatus");
-  const link = document.getElementById("amsOpenLocal");
-  const proxy = getAmsProxyBase();
-  if (link) {
-    link.href = proxy + "/#mission";
-    link.textContent = t().amsOpenLocal;
-  }
-  try {
-    const root = await resolveAmsApiRoot();
-    if (link) link.href = (root || proxy) + "/#mission";
-    if (status) {
-      status.textContent = t().amsLocalRunning;
-      status.classList.remove("is-error");
-      status.classList.add("is-ok");
-    }
-  } catch (_) {
-    if (status) {
-      status.textContent = t().amsLocalMissing;
-      status.classList.add("is-error");
-      status.classList.remove("is-ok");
-    }
-  }
-}
-
-function setAmsPassVisible(show) {
-  const pass = document.getElementById("amsPass");
-  const token = document.getElementById("amsToken");
-  const btn = document.getElementById("amsShowPass");
-  if (!pass || !btn) return;
-  pass.type = show ? "text" : "password";
-  if (token) token.type = show ? "text" : "password";
-  btn.setAttribute("aria-pressed", show ? "true" : "false");
-  btn.textContent = show ? t().amsHidePass : t().amsShowPass;
-}
-
-function toggleAmsSettings() {
-  const panel = document.getElementById("amsSettingsPanel");
-  const btn = document.getElementById("amsSettingsBtn");
-  if (!panel || !btn) return;
-  const open = panel.hidden;
-  panel.hidden = !open;
-  btn.setAttribute("aria-expanded", open ? "true" : "false");
-  if (open) loadAmsSettingsIntoForm();
-}
-
-function amsRangeIso() {
-  const date = document.getElementById("amsDate").value;
-  const from = document.getElementById("amsFrom").value || "00:00";
-  const to = document.getElementById("amsTo").value || "23:59";
-  if (!date) return null;
-  return {
-    from: `${date}T${from}:00`,
-    to: `${date}T${to}:59`,
-  };
-}
-
-async function fetchMissionFromAms(event) {
-  if (event) event.preventDefault();
-  loadAmsSettingsIntoForm();
-  const settings = {
-    username: (document.getElementById("amsUser").value || "").trim(),
-    password: document.getElementById("amsPass").value || "",
-    airport: (document.getElementById("amsAirport").value || "MCT").trim(),
-    token: (document.getElementById("amsToken").value || "").trim(),
-  };
-  localStorage.setItem(AMS_SETTINGS_KEY, JSON.stringify(settings));
-  const range = amsRangeIso();
-  if (!settings.token && (!settings.username || !settings.password)) {
-    showMissionError("need_credentials");
-    const panel = document.getElementById("amsSettingsPanel");
-    if (panel) panel.hidden = false;
-    return;
-  }
-  if (!range) {
-    showMissionError("need_datetime");
-    return;
-  }
-  const btn = document.getElementById("amsFetchBtn");
-  const ui = t();
-  btn.disabled = true;
-  btn.textContent = ui.amsFetching;
-  showMissionError(null);
-  clearMissionPreview();
-  paintMissionFile();
-  try {
-    const root = await resolveAmsApiRoot();
-    const res = await fetch(`${root}/api/mission/ams-fetch`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username: settings.username,
-        password: settings.password,
-        token: settings.token,
-        airport: settings.airport,
-        from: range.from,
-        to: range.to,
-      }),
-    });
-    let data = null;
-    try {
-      data = await res.json();
-    } catch (_) {}
-    if (!res.ok) {
-      showMissionError((data && data.error) || "ams_unreachable");
-      if (((data && data.error) || "").indexOf("login") === 0) {
-        const panel = document.getElementById("amsSettingsPanel");
-        if (panel) panel.hidden = false;
-      }
-      return;
-    }
-    if (!data || !data.rows || data.rows.length < 2) {
-      showMissionError("ams_empty");
-      return;
-    }
-    missionFile = null;
-    missionParsed = { sheetName: data.sheetName || "TrackingGrid", rows: data.rows };
-    renderMissionPreview(missionParsed.rows);
-    showMissionStatus(ui.missionFormatReady, false);
-    paintMissionFile();
-    const when = document.getElementById("amsWhen");
-    if (when) when.open = false;
-  } catch (err) {
-    const code = (err && err.code) || (err && err.message) || "ams_unreachable";
-    showMissionError(code === "ams_need_local" ? "ams_need_local" : "ams_unreachable");
-  } finally {
-    btn.disabled = false;
-    btn.textContent = ui.amsFetch;
-  }
 }
 
 function clearMissionPreview() {
@@ -1593,8 +1150,6 @@ function clearMissionFile() {
   missionFile = null;
   clearMissionPreview();
   document.getElementById("missionFileInput").value = "";
-  const pass = document.getElementById("amsPass");
-  if (pass) pass.value = "";
   showMissionError(null);
   paintMissionFile();
 }
@@ -1798,7 +1353,7 @@ async function formatMissionNow() {
     const blob = await buildMissionWorkbook(missionParsed.sheetName, missionParsed.rows);
     const base = missionFile
       ? missionFile.name.replace(/\.(xlsx|xlsm)$/i, "")
-      : `AMS_${new Date().toISOString().slice(0, 10)}`;
+      : `Mission_${new Date().toISOString().slice(0, 10)}`;
     downloadBlob(blob, `${base}_formatted.xlsx`);
   } catch (err) {
     showMissionError(err && err.code ? err.code : "format_failed", err && err.columns);
@@ -1863,27 +1418,7 @@ missionFileInput.addEventListener("change", () => {
 document.getElementById("missionFormatBtn").addEventListener("click", formatMissionNow);
 document.getElementById("missionPrintBtn").addEventListener("click", printMissionNow);
 document.getElementById("missionClearBtn").addEventListener("click", clearMissionFile);
-document.querySelectorAll(".mission-mode").forEach((btn) => {
-  btn.addEventListener("click", () => setMissionMode(btn.dataset.missionMode));
-});
-const amsForm = document.getElementById("amsForm");
-if (amsForm) amsForm.addEventListener("submit", fetchMissionFromAms);
-const amsSettingsForm = document.getElementById("amsSettingsForm");
-if (amsSettingsForm) amsSettingsForm.addEventListener("submit", loginAmsFromSettings);
-const amsSaveSettings = document.getElementById("amsSaveSettings");
-if (amsSaveSettings) amsSaveSettings.addEventListener("click", saveAmsSettingsFromForm);
-const amsSettingsBtn = document.getElementById("amsSettingsBtn");
-if (amsSettingsBtn) amsSettingsBtn.addEventListener("click", toggleAmsSettings);
-const amsShowPass = document.getElementById("amsShowPass");
-if (amsShowPass) {
-  amsShowPass.addEventListener("click", () => {
-    const show = amsShowPass.getAttribute("aria-pressed") !== "true";
-    setAmsPassVisible(show);
-  });
-}
-const amsClearSettings = document.getElementById("amsClearSettings");
-if (amsClearSettings) amsClearSettings.addEventListener("click", clearAmsSettings);
-loadAmsSettingsIntoForm();
+
 
 compareBtn.addEventListener("click", compareNow);
 demoBtn.addEventListener("click", loadDemo);
@@ -2081,60 +1616,9 @@ function renderTable() {
 loadTrack();
 bindRosterLinks();
 
-function acceptAmsBridgeRows(rows) {
-  if (!Array.isArray(rows) || rows.length < 2) return false;
-  setView("mission");
-  setMissionMode("ams");
-  missionFile = null;
-  missionParsed = { sheetName: "TrackingGrid", rows: rows };
-  renderMissionPreview(rows);
-  showMissionStatus(t().amsBridgeOk, false);
-  paintMissionFile();
-  const when = document.getElementById("amsWhen");
-  if (when) when.open = false;
-  return true;
-}
-
-function setupAmsBookmarklet() {
-  const a = document.getElementById("amsBookmarklet");
-  if (!a) return;
-  var bridge =
-    "https://khalidsaif912.github.io/book-list/ams-bridge.js?v=41";
-  a.setAttribute(
-    "href",
-    "javascript:(function(){var s=document.createElement('script');s.src='" +
-      bridge +
-      "&t='+Date.now();document.documentElement.appendChild(s);})();"
-  );
-  a.addEventListener("click", (event) => {
-    if ((location.hostname || "").indexOf("omanairports") === -1) {
-      event.preventDefault();
-      showMissionStatus(t().amsBookmarkHint, false);
-      alert(
-        lang === "ar"
-          ? "اسحب هذا الزر إلى شريط المفضلة، ثم افتح AMS واضغط المفضلة من هناك."
-          : "Drag this button to your bookmarks bar, then open AMS and click the bookmark there."
-      );
-    }
-  });
-}
-
-window.addEventListener("message", (event) => {
-  if (event.origin !== "https://ams-web.omanairports.co.om") return;
-  const data = event.data;
-  if (!data || data.type !== "booklist-ams-rows") return;
-  acceptAmsBridgeRows(data.rows);
-});
-
-setupAmsBookmarklet();
 setView(activeView);
 applyHashView();
 window.addEventListener("hashchange", applyHashView);
-setMissionMode("upload");
-if (/[?&]ams=1(?:&|$)/.test(location.search) || location.hash.indexOf("mission") !== -1) {
-  setView("mission");
-  setMissionMode("ams");
-}
 applyLang();
 setRailOpen(true);
 refreshSavedFlights()
