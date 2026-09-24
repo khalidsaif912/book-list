@@ -882,7 +882,7 @@ function missionPrintMastheadHtml(cols) {
   const label = escapeHtml(t().missionPrintDateLabel);
   const stamp = escapeHtml(formatMissionPrintStamp(new Date()));
   const n = Math.max(1, cols | 0);
-  return `<tr class="mission-print-date"><td colspan="${n}"><span class="mission-print-date-label">${label}</span><span class="mission-print-date-stamp">${stamp}</span></td></tr>`;
+  return `<tr class="mission-print-date"><td colspan="${n}"><span class="mission-print-date-label">${label}</span><span class="mission-print-plane" aria-hidden="true">🛫</span><span class="mission-print-date-stamp">${stamp}</span></td></tr>`;
 }
 
 function clearMissionPreview() {
@@ -1333,6 +1333,17 @@ function printMissionRows(rows) {
     margin-inline-end: 0.85rem;
     padding-inline-end: 0.85rem;
     border-inline-end: 1px solid #c4b8a5;
+  }
+  .mission-print-plane {
+    display: inline-block;
+    margin-inline-end: 0.5rem;
+    font-size: 12pt;
+    line-height: 1;
+    vertical-align: -0.08em;
+    color: #000;
+    filter: grayscale(1) brightness(0);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
   .mission-print-date-stamp {
     display: inline-block;
