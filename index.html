@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=40" />
+  <link rel="stylesheet" href="styles.css?v=41" />
   <script>
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.getRegistrations().then(function (regs) {
@@ -210,17 +210,18 @@
 
         <div id="missionAmsPanel" hidden>
           <div class="ams-work-card" id="amsWorkCard">
-            <p class="ams-work-lead" data-i18n="amsWorkLead">At work (no install): open AMS, sign in, then run the Book List tool from your bookmarks.</p>
+            <p class="ams-work-lead" data-i18n="amsWorkLead">جلب الرحلات من AMS بدون تثبيت أي برنامج:</p>
             <ol class="ams-work-steps">
-              <li data-i18n="amsWorkStep1">Open AMS and sign in</li>
-              <li data-i18n="amsWorkStep2">Drag this button to your bookmarks bar</li>
-              <li data-i18n="amsWorkStep3">On AMS, click the bookmark — the table opens here</li>
+              <li data-i18n="amsWorkStep1">من هذا الموقع: اسحب الزر «Book List ← AMS» إلى شريط المفضلة أعلى المتصفح.</li>
+              <li data-i18n="amsWorkStep2">افتح AMS من الزر أدناه وسجّل دخولك كالعادة.</li>
+              <li data-i18n="amsWorkStep3">ارجع لتبويب AMS، اضغط من المفضلة على «Book List ← AMS»، اختر التاريخ، وسيظهر الجدول هنا.</li>
             </ol>
             <div class="ams-work-actions">
+              <a class="btn ghost ams-bookmarklet" id="amsBookmarklet" href="#" title="اسحب إلى المفضلة" data-i18n="amsBookmarklet">Book List ← AMS</a>
               <a class="btn primary" id="amsOpenSite" href="https://ams-web.omanairports.co.om/#trackingGrid" target="_blank" rel="noopener" data-i18n="missionOpenAms">Open AMS</a>
-              <a class="btn ghost ams-bookmarklet" id="amsBookmarklet" href="#" data-i18n="amsBookmarklet">Book List ← AMS</a>
             </div>
-            <p class="hint" data-i18n="amsBookmarkHint">Or export TrackingGrid from AMS as Excel and use Upload file.</p>
+            <p class="hint ams-drag-tip" data-i18n="amsDragTip">اسحبني إلى المفضلة</p>
+            <p class="hint" data-i18n="amsBookmarkHint">لا يظهر شريط المفضلة؟ من قائمة المتصفح: المفضلة → إظهار شريط المفضلة. أو من AMS صدّر Excel ثم ارفعه من «رفع ملف».</p>
           </div>
           <details class="ams-when" id="amsWhen">
             <summary data-i18n="amsWhenTitle">Date &amp; time (needs PC helper)</summary>
@@ -270,6 +271,6 @@
       </section>
     </div>
   </div>
-  <script src="app.js?v=40"></script>
+  <script src="app.js?v=41"></script>
 </body>
 </html>

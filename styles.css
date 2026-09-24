@@ -782,8 +782,10 @@ body.view-mission .top {
   gap: 8px;
   align-items: center;
 }
-.ams-bookmarklet {
-  cursor: grab;
+.ams-drag-tip {
+  margin: 0;
+  font-weight: 700;
+  color: var(--navy);
 }
 .ams-local-status {
   font-size: 13px;

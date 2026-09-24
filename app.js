@@ -87,13 +87,14 @@ const I18N = {
     amsLocalMissing: "Local helper not running",
     amsProxy: "Helper server URL",
     amsProxyHint: "Usually http://127.0.0.1:8022 — only if a helper is allowed on this PC",
-    amsWorkLead: "At work (no install): open AMS, sign in, then run the Book List tool from your bookmarks.",
-    amsWorkStep1: "Open AMS and sign in",
-    amsWorkStep2: "Drag “Book List ← AMS” to your bookmarks bar",
-    amsWorkStep3: "On the AMS tab, click that bookmark — the table opens here",
+    amsWorkLead: "Get flights from AMS without installing anything:",
+    amsWorkStep1: "On this site: drag the green “Book List ← AMS” button up to the bookmarks bar.",
+    amsWorkStep2: "Open AMS with the button below and sign in as usual.",
+    amsWorkStep3: "While on the AMS tab: click “Book List ← AMS” in bookmarks, pick the date, then wait for the table here.",
     amsBookmarklet: "Book List ← AMS",
-    amsBookmarkHint: "Or export TrackingGrid from AMS as Excel and use Upload file.",
+    amsBookmarkHint: "No bookmarks bar? Browser menu → Bookmarks → Show bookmarks bar. Or export Excel from AMS and use Upload file.",
     amsBridgeOk: "Received flights from AMS",
+    amsDragTip: "Drag me to bookmarks",
     missionRecentTitle: "Last 10 tables",
     missionRecentNote: "Saved globally on the server",
     missionRecentEmpty: "No saved tables yet",
@@ -252,13 +253,14 @@ const I18N = {
     amsLocalMissing: "المساعد المحلي غير شغّال",
     amsProxy: "عنوان المساعد",
     amsProxyHint: "عادةً http://127.0.0.1:8022 — فقط إن سُمح بمساعد على الجهاز",
-    amsWorkLead: "في العمل (بدون تثبيت): افتح AMS وسجّل الدخول، ثم شغّل أداة Book List من المفضلة.",
-    amsWorkStep1: "افتح AMS وسجّل الدخول",
-    amsWorkStep2: "اسحب زر «Book List ← AMS» إلى شريط المفضلة",
-    amsWorkStep3: "من تبويب AMS اضغط المفضلة — يفتح الجدول هنا",
+    amsWorkLead: "جلب الرحلات من AMS بدون تثبيت أي برنامج:",
+    amsWorkStep1: "من هذا الموقع: اسحب الزر «Book List ← AMS» إلى شريط المفضلة أعلى المتصفح.",
+    amsWorkStep2: "افتح AMS من الزر أدناه وسجّل دخولك كالعادة.",
+    amsWorkStep3: "ارجع لتبويب AMS، اضغط من المفضلة على «Book List ← AMS»، اختر التاريخ، وسيظهر الجدول هنا.",
     amsBookmarklet: "Book List ← AMS",
-    amsBookmarkHint: "أو صدّر TrackingGrid من AMS كـ Excel واستخدم رفع ملف.",
+    amsBookmarkHint: "لا يظهر شريط المفضلة؟ من قائمة المتصفح: المفضلة → إظهار شريط المفضلة. أو من AMS صدّر Excel ثم ارفعه من «رفع ملف».",
     amsBridgeOk: "تم استلام الرحلات من AMS",
+    amsDragTip: "اسحبني إلى المفضلة",
     missionRecentTitle: "آخر 10 جداول",
     missionRecentNote: "محفوظة عالمياً على السيرفر",
     missionRecentEmpty: "لا توجد جداول محفوظة بعد",
@@ -2097,7 +2099,7 @@ function setupAmsBookmarklet() {
   const a = document.getElementById("amsBookmarklet");
   if (!a) return;
   var bridge =
-    "https://khalidsaif912.github.io/book-list/ams-bridge.js?v=40";
+    "https://khalidsaif912.github.io/book-list/ams-bridge.js?v=41";
   a.setAttribute(
     "href",
     "javascript:(function(){var s=document.createElement('script');s.src='" +
