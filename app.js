@@ -42,6 +42,9 @@ const I18N = {
     lead: "The Load Plan is the source. Upload both files to see what is booked and what is not.",
     tabCargo: "Cargo matching",
     tabMission: "Mission",
+    installApp: "Install app",
+    installAppDone: "Installed",
+    installAppHint: "Use the browser menu: Install app / Add to Home Screen",
     missionTitle: "Mission",
     missionLead: "Upload the raw flight table. It formats first, then print becomes available.",
     missionDropStrong: "Drop the unformatted flight table",
@@ -163,6 +166,9 @@ const I18N = {
     lead: "الأساس هو خطة التحميل. ارفع الملفين لمعرفة ما حُجز وما لم يُحجز.",
     tabCargo: "مطابقة الشحنات",
     tabMission: "مهمة",
+    installApp: "تثبيت التطبيق",
+    installAppDone: "مثبّت",
+    installAppHint: "من قائمة المتصفح: تثبيت التطبيق / إضافة إلى الشاشة الرئيسية",
     missionTitle: "مهمة",
     missionLead: "ارفع جدول الرحلات غير المنسّق. يُنسَّق أولاً ثم يصبح زر الطباعة فعالاً.",
     missionDropStrong: "أسقط جدول الرحلات غير المنسّق",
@@ -784,6 +790,7 @@ function applyLang() {
   document.documentElement.lang = lang;
   document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
   document.title = activeView === "mission" ? ui.missionTitle : ui.title;
+  if (typeof paintInstallAppBtn === "function") paintInstallAppBtn();
   document.querySelectorAll(".lang-btn").forEach((btn) => {
     btn.textContent = btn.id === "langMini" ? (lang === "en" ? "ع" : "EN") : ui.langBtn;
   });
@@ -1682,10 +1689,77 @@ function renderTable() {
 loadTrack();
 bindRosterLinks();
 
+let deferredInstallPrompt = null;
+
+function isAppInstalled() {
+  return (
+    window.matchMedia("(display-mode: standalone)").matches ||
+    window.navigator.standalone === true
+  );
+}
+
+function paintInstallAppBtn() {
+  const btn = document.getElementById("installAppBtn");
+  if (!btn) return;
+  const ui = t();
+  const label = btn.querySelector("[data-i18n='installApp']") || btn.querySelector("span");
+  if (isAppInstalled()) {
+    btn.hidden = false;
+    btn.classList.add("is-installed");
+    btn.disabled = true;
+    if (label) label.textContent = ui.installAppDone;
+    return;
+  }
+  btn.classList.remove("is-installed");
+  btn.disabled = false;
+  if (label) label.textContent = ui.installApp;
+  // Show when browser can install, or always as fallback with manual hint
+  btn.hidden = false;
+}
+
+async function installAppNow() {
+  const ui = t();
+  if (isAppInstalled()) {
+    paintInstallAppBtn();
+    return;
+  }
+  if (deferredInstallPrompt) {
+    deferredInstallPrompt.prompt();
+    try {
+      await deferredInstallPrompt.userChoice;
+    } catch (_) {}
+    deferredInstallPrompt = null;
+    paintInstallAppBtn();
+    return;
+  }
+  alert(ui.installAppHint);
+}
+
+window.addEventListener("beforeinstallprompt", (event) => {
+  event.preventDefault();
+  deferredInstallPrompt = event;
+  paintInstallAppBtn();
+});
+
+window.addEventListener("appinstalled", () => {
+  deferredInstallPrompt = null;
+  paintInstallAppBtn();
+});
+
+const installAppBtn = document.getElementById("installAppBtn");
+if (installAppBtn) installAppBtn.addEventListener("click", installAppNow);
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(() => {});
+  });
+}
+
 setView(activeView);
 applyHashView();
 window.addEventListener("hashchange", applyHashView);
 applyLang();
+paintInstallAppBtn();
 setRailOpen(true);
 refreshSavedFlights()
   .then(async () => {

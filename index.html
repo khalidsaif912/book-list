@@ -3,18 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Cargo matching</title>
+  <title>Book List</title>
+  <meta name="theme-color" content="#00aba9" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Book List" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=45" />
-  <script>
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.getRegistrations().then(function (regs) {
-        regs.forEach(function (r) { r.unregister(); });
-      });
-    }
-  </script>
+  <link rel="stylesheet" href="styles.css?v=46" />
 </head>
 <body>
   <aside class="rail" id="rail" data-view="cargo">
@@ -58,6 +58,10 @@
     <nav class="view-tabs" id="viewTabs" role="tablist">
       <button type="button" class="view-tab active" data-view="cargo" role="tab" aria-selected="true" data-i18n="tabCargo">Cargo matching</button>
       <button type="button" class="view-tab" data-view="mission" role="tab" aria-selected="false" data-i18n="tabMission">Mission</button>
+      <button type="button" class="install-app-btn" id="installAppBtn" hidden>
+        <img src="icon-192.png" alt="" width="22" height="22" />
+        <span data-i18n="installApp">Install app</span>
+      </button>
     </nav>
 
     <div id="viewCargo">
@@ -190,6 +194,6 @@
       </section>
     </div>
   </div>
-  <script src="app.js?v=45"></script>
+  <script src="app.js?v=46"></script>
 </body>
 </html>

@@ -563,6 +563,7 @@ tbody tr.inbound-row:hover td { background: #f6f4ee; }
 
 .view-tabs {
   display: flex;
+  flex-wrap: wrap;
   gap: 4px;
   margin-bottom: 18px;
   padding: 4px;
@@ -570,6 +571,7 @@ tbody tr.inbound-row:hover td { background: #f6f4ee; }
   border-radius: 14px;
   width: fit-content;
   max-width: 100%;
+  align-items: center;
 }
 .view-tab {
   border: 0;
@@ -587,6 +589,36 @@ tbody tr.inbound-row:hover td { background: #f6f4ee; }
   background: var(--card);
   color: var(--navy);
   box-shadow: 0 1px 2px rgba(28, 25, 21, 0.06);
+}
+.install-app-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-inline-start: 6px;
+  border: 0;
+  background: #00aba9;
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 7px 12px 7px 8px;
+  border-radius: 11px;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(28, 25, 21, 0.08);
+}
+.install-app-btn:hover { filter: brightness(1.05); }
+.install-app-btn img {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  object-fit: cover;
+}
+.install-app-btn[hidden] { display: none !important; }
+.install-app-btn.is-installed {
+  background: #ebe4d6;
+  color: var(--navy);
+  cursor: default;
 }
 .hint {
   margin: 0;
