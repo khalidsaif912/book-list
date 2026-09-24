@@ -669,7 +669,8 @@ body.view-mission .top {
   color: var(--muted);
   font-weight: 600;
 }
-.ams-settings-form .ams-token-field {
+.ams-settings-form .ams-token-field,
+.ams-settings-form .ams-proxy-field {
   grid-column: 1 / -1;
 }
 .ams-settings-form input {
