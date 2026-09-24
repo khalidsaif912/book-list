@@ -740,6 +740,25 @@ body.view-mission .top {
   font-weight: 600;
 }
 .ams-when[open] > summary::after { content: "▴"; }
+.ams-local-banner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff8e8;
+}
+.ams-local-status {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.ams-local-status.is-ok { color: var(--go); }
+.ams-local-status.is-error { color: var(--bad, #b42318); }
 .ams-when-form {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

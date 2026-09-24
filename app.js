@@ -81,7 +81,10 @@ const I18N = {
     amsTo: "To",
     amsFetch: "Fetch table",
     amsFetching: "Fetching…",
-    amsHint: "Uses Settings above. Needs local server on the airport network.",
+    amsHint: "GitHub Pages uses your local serve.ps1 for AMS (airport network). Cloud VPS cannot reach AMS.",
+    amsOpenLocal: "Open local app (AMS)",
+    amsLocalRunning: "Local server connected",
+    amsLocalMissing: "Local server not running — start serve.ps1",
     missionRecentTitle: "Last 10 tables",
     missionRecentNote: "Saved globally on the server",
     missionRecentEmpty: "No saved tables yet",
@@ -182,7 +185,8 @@ const I18N = {
       need_datetime: "Choose a date and time range.",
       login_failed: "AMS login failed. Check credentials in Settings, or paste X-AMSAuthorization from an AMS browser session.",
       login_no_token: "AMS login did not return a session. Paste X-AMSAuthorization from DevTools in Settings.",
-      ams_unreachable: "Cannot reach AMS from this server. On the airport network run: powershell -ExecutionPolicy Bypass -File .\\serve.ps1 then fetch again (or open http://127.0.0.1:8022/).",
+      ams_unreachable: "Cannot reach AMS from the cloud site. Keep serve.ps1 running, then try again — or open http://127.0.0.1:8022/ (GitHub Pages cannot talk to AMS directly).",
+      ams_need_local: "AMS only works via the local server on this PC. Run: powershell -ExecutionPolicy Bypass -File .\\serve.ps1 — then Sign in again (or use http://127.0.0.1:8022/).",
       ams_fetch_failed: "Could not fetch the flight table from AMS.",
       ams_empty: "No flights found for that time range.",
       ams_unexpected_shape: "AMS returned data in an unexpected format.",
@@ -233,7 +237,10 @@ const I18N = {
     amsTo: "إلى",
     amsFetch: "جلب الجدول",
     amsFetching: "جاري الجلب…",
-    amsHint: "يستخدم الإعدادات أعلاه. يتطلب السيرفر المحلي على شبكة المطار.",
+    amsHint: "موقع GitHub يستخدم serve.ps1 على جهازك لـ AMS (شبكة المطار). السيرفر السحابي لا يصل إلى AMS.",
+    amsOpenLocal: "فتح النسخة المحلية (AMS)",
+    amsLocalRunning: "السيرفر المحلي متصل",
+    amsLocalMissing: "السيرفر المحلي غير شغّال — شغّل serve.ps1",
     missionRecentTitle: "آخر 10 جداول",
     missionRecentNote: "محفوظة عالمياً على السيرفر",
     missionRecentEmpty: "لا توجد جداول محفوظة بعد",
@@ -334,7 +341,8 @@ const I18N = {
       need_datetime: "اختر التاريخ ونطاق الوقت.",
       login_failed: "فشل دخول AMS. تحقق من البيانات في الإعدادات، أو الصق X-AMSAuthorization من جلسة متصفح AMS.",
       login_no_token: "لم يُرجع AMS جلسة صالحة. الصق X-AMSAuthorization من أدوات المطوّر في الإعدادات.",
-      ams_unreachable: "لا يمكن الوصول إلى AMS من هذا السيرفر. على شبكة المطار شغّل: powershell -ExecutionPolicy Bypass -File .\\serve.ps1 ثم أعد الجلب (أو افتح http://127.0.0.1:8022/).",
+      ams_unreachable: "موقع GitHub لا يصل إلى AMS عبر السحابة. اترك serve.ps1 يعمل ثم أعد المحاولة — أو افتح http://127.0.0.1:8022/ مباشرة.",
+      ams_need_local: "AMS يعمل فقط عبر السيرفر المحلي على جهازك. شغّل: powershell -ExecutionPolicy Bypass -File .\\serve.ps1 ثم سجّل الدخول مرة أخرى (أو افتح http://127.0.0.1:8022/).",
       ams_fetch_failed: "تعذر جلب جدول الرحلات من AMS.",
       ams_empty: "لا توجد رحلات في هذا النطاق الزمني.",
       ams_unexpected_shape: "بيانات AMS بصيغة غير متوقعة.",
@@ -943,6 +951,7 @@ function setMissionMode(mode) {
     const settingsBtn = document.getElementById("amsSettingsBtn");
     if (panel) panel.hidden = false;
     if (settingsBtn) settingsBtn.setAttribute("aria-expanded", "true");
+    refreshAmsLocalBanner();
   }
 }
 
@@ -1034,9 +1043,11 @@ async function loginAmsFromSettings(event) {
     setMissionMode("ams");
     const when = document.getElementById("amsWhen");
     if (when) when.open = true;
-  } catch (_) {
-    showMissionError("ams_unreachable");
-    setAmsLoginStatus(ui.errors.ams_unreachable, true);
+  } catch (err) {
+    const code = (err && err.code) || (err && err.message) || "ams_unreachable";
+    const key = code === "ams_need_local" ? "ams_need_local" : "ams_unreachable";
+    showMissionError(key);
+    setAmsLoginStatus((ui.errors && ui.errors[key]) || key, true);
   } finally {
     if (btn) {
       btn.disabled = false;
@@ -1101,18 +1112,57 @@ function amsRangeIso() {
 }
 
 async function resolveAmsApiRoot() {
-  // Prefer local Flask when the PC can reach AMS (airport network).
+  // Same machine: use relative URLs.
   if (location.port === "8022" || location.hostname === "127.0.0.1" || location.hostname === "localhost") {
     return "";
   }
+  // GitHub Pages / VPS pages: AMS is only reachable via local Flask on this PC.
+  // Never fall back to the cloud VPS — it cannot reach the airport AMS network.
   try {
     const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), 900);
-    const res = await fetch(`${LOCAL_API}/api/mission/tables`, { signal: ctrl.signal });
+    const timer = setTimeout(() => ctrl.abort(), 2000);
+    const res = await fetch(`${LOCAL_API}/api/mission/tables`, {
+      signal: ctrl.signal,
+      cache: "no-store",
+    });
     clearTimeout(timer);
     if (res.ok) return LOCAL_API;
   } catch (_) {}
-  return API_ROOT;
+  const err = new Error("ams_need_local");
+  err.code = "ams_need_local";
+  throw err;
+}
+
+function isRemoteMissionHost() {
+  const host = location.hostname || "";
+  return host.indexOf("github.io") !== -1 || host.indexOf("sslip.io") !== -1;
+}
+
+async function refreshAmsLocalBanner() {
+  const banner = document.getElementById("amsLocalBanner");
+  if (!banner) return;
+  if (!isRemoteMissionHost()) {
+    banner.hidden = true;
+    return;
+  }
+  banner.hidden = false;
+  const status = document.getElementById("amsLocalStatus");
+  const link = document.getElementById("amsOpenLocal");
+  if (link) link.href = LOCAL_API + "/";
+  try {
+    await resolveAmsApiRoot();
+    if (status) {
+      status.textContent = t().amsLocalRunning;
+      status.classList.remove("is-error");
+      status.classList.add("is-ok");
+    }
+  } catch (_) {
+    if (status) {
+      status.textContent = t().amsLocalMissing;
+      status.classList.add("is-error");
+      status.classList.remove("is-ok");
+    }
+  }
 }
 
 async function fetchMissionFromAms(event) {
@@ -1180,8 +1230,9 @@ async function fetchMissionFromAms(event) {
     paintMissionFile();
     const when = document.getElementById("amsWhen");
     if (when) when.open = false;
-  } catch (_) {
-    showMissionError("ams_unreachable");
+  } catch (err) {
+    const code = (err && err.code) || (err && err.message) || "ams_unreachable";
+    showMissionError(code === "ams_need_local" ? "ams_need_local" : "ams_unreachable");
   } finally {
     btn.disabled = false;
     btn.textContent = ui.amsFetch;
