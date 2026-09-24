@@ -1,10 +1,10 @@
 /* Book List PWA — cache static shell for offline open / installability */
-const CACHE = "book-list-v47";
+const CACHE = "book-list-v48";
 const ASSETS = [
   "./",
   "./index.html",
-  "./styles.css?v=47",
-  "./app.js?v=47",
+  "./styles.css?v=48",
+  "./app.js?v=48",
   "./manifest.webmanifest",
   "./icon-192.png",
   "./icon-512.png",

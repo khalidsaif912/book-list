@@ -1703,19 +1703,20 @@ function paintInstallAppBtn() {
   const mini = document.getElementById("installAppMini");
   const ui = t();
   const installed = isAppInstalled();
+  const label = installed ? ui.installAppDone : ui.installApp;
   if (btn) {
-    const label = btn.querySelector("[data-i18n='installApp']") || btn.querySelector("span");
     btn.hidden = false;
     btn.classList.toggle("is-installed", installed);
     btn.disabled = installed;
-    if (label) label.textContent = installed ? ui.installAppDone : ui.installApp;
+    btn.title = label;
+    btn.setAttribute("aria-label", label);
   }
   if (mini) {
     mini.hidden = false;
     mini.classList.toggle("is-installed", installed);
     mini.disabled = installed;
-    mini.title = installed ? ui.installAppDone : ui.installApp;
-    mini.setAttribute("aria-label", installed ? ui.installAppDone : ui.installApp);
+    mini.title = label;
+    mini.setAttribute("aria-label", label);
   }
 }
 
