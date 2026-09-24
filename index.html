@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=39" />
+  <link rel="stylesheet" href="styles.css?v=40" />
   <script>
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.getRegistrations().then(function (regs) {
@@ -193,8 +193,8 @@
               <input id="amsProxy" name="proxy" type="url" autocomplete="off" dir="ltr" placeholder="http://127.0.0.1:8022" />
             </label>
           </form>
-          <p class="hint" data-i18n="amsProxyHint">Default http://127.0.0.1:8022 — or a colleague’s PC on the airport LAN</p>
-          <p class="hint" data-i18n="amsSettingsHint">Sign in saves your session on this device. Needs local server on the airport network (serve.ps1). If login fails, paste X-AMSAuthorization below.</p>
+          <p class="hint" data-i18n="amsProxyHint">Usually http://127.0.0.1:8022 on this computer</p>
+          <p class="hint" data-i18n="amsSettingsHint">Sign in saves the session on this device. Your PC can reach AMS; GitHub Pages cannot — run تشغيل.bat (or open http://127.0.0.1:8022/). If login fails, paste X-AMSAuthorization.</p>
         </div>
 
         <div id="missionUploadPanel">
@@ -209,12 +209,21 @@
         </div>
 
         <div id="missionAmsPanel" hidden>
-          <div class="ams-local-banner" id="amsLocalBanner" hidden>
-            <span id="amsLocalStatus" class="ams-local-status"></span>
-            <a class="btn ghost" id="amsOpenLocal" href="http://127.0.0.1:8022/" target="_blank" rel="noopener" data-i18n="amsOpenLocal">Open local app (AMS)</a>
+          <div class="ams-work-card" id="amsWorkCard">
+            <p class="ams-work-lead" data-i18n="amsWorkLead">At work (no install): open AMS, sign in, then run the Book List tool from your bookmarks.</p>
+            <ol class="ams-work-steps">
+              <li data-i18n="amsWorkStep1">Open AMS and sign in</li>
+              <li data-i18n="amsWorkStep2">Drag this button to your bookmarks bar</li>
+              <li data-i18n="amsWorkStep3">On AMS, click the bookmark — the table opens here</li>
+            </ol>
+            <div class="ams-work-actions">
+              <a class="btn primary" id="amsOpenSite" href="https://ams-web.omanairports.co.om/#trackingGrid" target="_blank" rel="noopener" data-i18n="missionOpenAms">Open AMS</a>
+              <a class="btn ghost ams-bookmarklet" id="amsBookmarklet" href="#" data-i18n="amsBookmarklet">Book List ← AMS</a>
+            </div>
+            <p class="hint" data-i18n="amsBookmarkHint">Or export TrackingGrid from AMS as Excel and use Upload file.</p>
           </div>
           <details class="ams-when" id="amsWhen">
-            <summary data-i18n="amsWhenTitle">Date &amp; time</summary>
+            <summary data-i18n="amsWhenTitle">Date &amp; time (needs PC helper)</summary>
             <form class="ams-when-form" id="amsForm">
               <label>
                 <span data-i18n="amsDate">Date</span>
@@ -230,8 +239,8 @@
               </label>
               <button type="submit" class="btn primary" id="amsFetchBtn" data-i18n="amsFetch">Fetch table</button>
             </form>
+            <p class="hint" data-i18n="amsHint">Optional if you can run a local helper. Prefer the AMS bookmark above at work.</p>
           </details>
-          <p class="hint" data-i18n="amsHint">Uses the credentials from Settings above. Needs local server on the airport network.</p>
         </div>
 
         <div class="actions">
@@ -261,6 +270,6 @@
       </section>
     </div>
   </div>
-  <script src="app.js?v=39"></script>
+  <script src="app.js?v=40"></script>
 </body>
 </html>

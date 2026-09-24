@@ -73,20 +73,27 @@ const I18N = {
     amsLoginOk: "Signed in — choose date & time, then fetch the table",
     amsSaveSettings: "Save only",
     amsClearSettings: "Clear saved",
-    amsSettingsHint: "Sign in saves the session on this device. Your PC can reach AMS; GitHub Pages cannot — run تشغيل.bat (or open http://127.0.0.1:8022/). If login fails, paste X-AMSAuthorization.",
+    amsSettingsHint: "Optional PC helper only. At work use the AMS bookmark (no install). If needed, paste X-AMSAuthorization.",
     amsSettingsSaved: "Settings saved",
-    amsWhenTitle: "Date & time",
+    amsWhenTitle: "Date & time (needs PC helper)",
     amsDate: "Date",
     amsFrom: "From",
     amsTo: "To",
     amsFetch: "Fetch table",
     amsFetching: "Fetching…",
-    amsHint: "AMS needs تشغيل.bat on this PC (or http://127.0.0.1:8022/). The cloud site is blocked from AMS; your browser/PC is not.",
+    amsHint: "Optional if you can run a local helper. Prefer the AMS bookmark above at work.",
     amsOpenLocal: "Open AMS helper (this PC)",
     amsLocalRunning: "Helper on this PC connected",
-    amsLocalMissing: "Run تشغيل.bat on this PC, then refresh",
+    amsLocalMissing: "Local helper not running",
     amsProxy: "Helper server URL",
-    amsProxyHint: "Usually http://127.0.0.1:8022 on this computer",
+    amsProxyHint: "Usually http://127.0.0.1:8022 — only if a helper is allowed on this PC",
+    amsWorkLead: "At work (no install): open AMS, sign in, then run the Book List tool from your bookmarks.",
+    amsWorkStep1: "Open AMS and sign in",
+    amsWorkStep2: "Drag “Book List ← AMS” to your bookmarks bar",
+    amsWorkStep3: "On the AMS tab, click that bookmark — the table opens here",
+    amsBookmarklet: "Book List ← AMS",
+    amsBookmarkHint: "Or export TrackingGrid from AMS as Excel and use Upload file.",
+    amsBridgeOk: "Received flights from AMS",
     missionRecentTitle: "Last 10 tables",
     missionRecentNote: "Saved globally on the server",
     missionRecentEmpty: "No saved tables yet",
@@ -187,8 +194,8 @@ const I18N = {
       need_datetime: "Choose a date and time range.",
       login_failed: "AMS login failed. Check credentials in Settings, or paste X-AMSAuthorization from an AMS browser session.",
       login_no_token: "AMS login did not return a session. Paste X-AMSAuthorization from DevTools in Settings.",
-      ams_unreachable: "GitHub Pages / cloud cannot reach AMS (blocked). Your PC can — run تشغيل.bat or open http://127.0.0.1:8022/ then sign in.",
-      ams_need_local: "Start تشغيل.bat on this PC (leaves a small helper running), then sign in again — or open http://127.0.0.1:8022/ directly.",
+      ams_unreachable: "Cloud helper unavailable. At work use the AMS bookmark (Book List ← AMS) or upload an Excel export.",
+      ams_need_local: "At work use the AMS bookmark — no .bat needed. Or upload TrackingGrid Excel.",
       ams_fetch_failed: "Could not fetch the flight table from AMS.",
       ams_empty: "No flights found for that time range.",
       ams_unexpected_shape: "AMS returned data in an unexpected format.",
@@ -231,20 +238,27 @@ const I18N = {
     amsLoginOk: "تم الدخول — اختر التاريخ والوقت ثم اجلب الجدول",
     amsSaveSettings: "حفظ فقط",
     amsClearSettings: "مسح المحفوظ",
-    amsSettingsHint: "تسجيل الدخول يحفظ الجلسة على هذا الجهاز. جهازك يصل إلى AMS لكن موقع GitHub لا يصل — شغّل تشغيل.bat (أو افتح http://127.0.0.1:8022/). إذا فشل الدخول: الصق X-AMSAuthorization.",
+    amsSettingsHint: "المساعد على الجهاز اختياري. في العمل استخدم أداة المفضلة من AMS (بدون تثبيت). عند الحاجة الصق X-AMSAuthorization.",
     amsSettingsSaved: "تم حفظ الإعدادات",
-    amsWhenTitle: "التاريخ والوقت",
+    amsWhenTitle: "التاريخ والوقت (يحتاج مساعد على الجهاز)",
     amsDate: "التاريخ",
     amsFrom: "من",
     amsTo: "إلى",
     amsFetch: "جلب الجدول",
     amsFetching: "جاري الجلب…",
-    amsHint: "AMS يحتاج تشغيل.bat على هذا الجهاز (أو http://127.0.0.1:8022/). السحابة محجوبة عن AMS؛ جهازك ومتصفحك ليسا كذلك.",
+    amsHint: "اختياري إن أمكن تشغيل مساعد محلي. في العمل فضّل أداة المفضلة أعلاه.",
     amsOpenLocal: "فتح مساعد AMS (هذا الجهاز)",
     amsLocalRunning: "المساعد على هذا الجهاز متصل",
-    amsLocalMissing: "شغّل تشغيل.bat على هذا الجهاز ثم حدّث الصفحة",
+    amsLocalMissing: "المساعد المحلي غير شغّال",
     amsProxy: "عنوان المساعد",
-    amsProxyHint: "عادةً http://127.0.0.1:8022 على هذا الكمبيوتر",
+    amsProxyHint: "عادةً http://127.0.0.1:8022 — فقط إن سُمح بمساعد على الجهاز",
+    amsWorkLead: "في العمل (بدون تثبيت): افتح AMS وسجّل الدخول، ثم شغّل أداة Book List من المفضلة.",
+    amsWorkStep1: "افتح AMS وسجّل الدخول",
+    amsWorkStep2: "اسحب زر «Book List ← AMS» إلى شريط المفضلة",
+    amsWorkStep3: "من تبويب AMS اضغط المفضلة — يفتح الجدول هنا",
+    amsBookmarklet: "Book List ← AMS",
+    amsBookmarkHint: "أو صدّر TrackingGrid من AMS كـ Excel واستخدم رفع ملف.",
+    amsBridgeOk: "تم استلام الرحلات من AMS",
     missionRecentTitle: "آخر 10 جداول",
     missionRecentNote: "محفوظة عالمياً على السيرفر",
     missionRecentEmpty: "لا توجد جداول محفوظة بعد",
@@ -345,8 +359,8 @@ const I18N = {
       need_datetime: "اختر التاريخ ونطاق الوقت.",
       login_failed: "فشل دخول AMS. تحقق من البيانات في الإعدادات، أو الصق X-AMSAuthorization من جلسة متصفح AMS.",
       login_no_token: "لم يُرجع AMS جلسة صالحة. الصق X-AMSAuthorization من أدوات المطوّر في الإعدادات.",
-      ams_unreachable: "موقع GitHub / السحابة لا يصلان إلى AMS (محجوبان). جهازك يصل — شغّل تشغيل.bat أو افتح http://127.0.0.1:8022/ ثم سجّل الدخول.",
-      ams_need_local: "شغّل تشغيل.bat على هذا الجهاز (يبقى مساعد صغير يعمل) ثم أعد تسجيل الدخول — أو افتح http://127.0.0.1:8022/ مباشرة.",
+      ams_unreachable: "المساعد السحابي غير متاح. في العمل استخدم مفضلة AMS (Book List ← AMS) أو ارفع ملف Excel.",
+      ams_need_local: "في العمل استخدم مفضلة AMS — بدون ملفات .bat. أو ارفع Excel من TrackingGrid.",
       ams_fetch_failed: "تعذر جلب جدول الرحلات من AMS.",
       ams_empty: "لا توجد رحلات في هذا النطاق الزمني.",
       ams_unexpected_shape: "بيانات AMS بصيغة غير متوقعة.",
@@ -2064,10 +2078,61 @@ function renderTable() {
 
 loadTrack();
 bindRosterLinks();
+
+function acceptAmsBridgeRows(rows) {
+  if (!Array.isArray(rows) || rows.length < 2) return false;
+  setView("mission");
+  setMissionMode("ams");
+  missionFile = null;
+  missionParsed = { sheetName: "TrackingGrid", rows: rows };
+  renderMissionPreview(rows);
+  showMissionStatus(t().amsBridgeOk, false);
+  paintMissionFile();
+  const when = document.getElementById("amsWhen");
+  if (when) when.open = false;
+  return true;
+}
+
+function setupAmsBookmarklet() {
+  const a = document.getElementById("amsBookmarklet");
+  if (!a) return;
+  var bridge =
+    "https://khalidsaif912.github.io/book-list/ams-bridge.js?v=40";
+  a.setAttribute(
+    "href",
+    "javascript:(function(){var s=document.createElement('script');s.src='" +
+      bridge +
+      "&t='+Date.now();document.documentElement.appendChild(s);})();"
+  );
+  a.addEventListener("click", (event) => {
+    if ((location.hostname || "").indexOf("omanairports") === -1) {
+      event.preventDefault();
+      showMissionStatus(t().amsBookmarkHint, false);
+      alert(
+        lang === "ar"
+          ? "اسحب هذا الزر إلى شريط المفضلة، ثم افتح AMS واضغط المفضلة من هناك."
+          : "Drag this button to your bookmarks bar, then open AMS and click the bookmark there."
+      );
+    }
+  });
+}
+
+window.addEventListener("message", (event) => {
+  if (event.origin !== "https://ams-web.omanairports.co.om") return;
+  const data = event.data;
+  if (!data || data.type !== "booklist-ams-rows") return;
+  acceptAmsBridgeRows(data.rows);
+});
+
+setupAmsBookmarklet();
 setView(activeView);
 applyHashView();
 window.addEventListener("hashchange", applyHashView);
 setMissionMode("upload");
+if (/[?&]ams=1(?:&|$)/.test(location.search) || location.hash.indexOf("mission") !== -1) {
+  setView("mission");
+  setMissionMode("ams");
+}
 applyLang();
 setRailOpen(true);
 refreshSavedFlights()
