@@ -1700,21 +1700,23 @@ function isAppInstalled() {
 
 function paintInstallAppBtn() {
   const btn = document.getElementById("installAppBtn");
-  if (!btn) return;
+  const mini = document.getElementById("installAppMini");
   const ui = t();
-  const label = btn.querySelector("[data-i18n='installApp']") || btn.querySelector("span");
-  if (isAppInstalled()) {
+  const installed = isAppInstalled();
+  if (btn) {
+    const label = btn.querySelector("[data-i18n='installApp']") || btn.querySelector("span");
     btn.hidden = false;
-    btn.classList.add("is-installed");
-    btn.disabled = true;
-    if (label) label.textContent = ui.installAppDone;
-    return;
+    btn.classList.toggle("is-installed", installed);
+    btn.disabled = installed;
+    if (label) label.textContent = installed ? ui.installAppDone : ui.installApp;
   }
-  btn.classList.remove("is-installed");
-  btn.disabled = false;
-  if (label) label.textContent = ui.installApp;
-  // Show when browser can install, or always as fallback with manual hint
-  btn.hidden = false;
+  if (mini) {
+    mini.hidden = false;
+    mini.classList.toggle("is-installed", installed);
+    mini.disabled = installed;
+    mini.title = installed ? ui.installAppDone : ui.installApp;
+    mini.setAttribute("aria-label", installed ? ui.installAppDone : ui.installApp);
+  }
 }
 
 async function installAppNow() {
@@ -1748,6 +1750,8 @@ window.addEventListener("appinstalled", () => {
 
 const installAppBtn = document.getElementById("installAppBtn");
 if (installAppBtn) installAppBtn.addEventListener("click", installAppNow);
+const installAppMini = document.getElementById("installAppMini");
+if (installAppMini) installAppMini.addEventListener("click", installAppNow);
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {

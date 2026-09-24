@@ -190,7 +190,8 @@ body.rail-collapsed .rail-inner { display: none; }
   gap: 8px;
 }
 .rail-foot .lang-btn,
-.rail-foot .roster-btn {
+.rail-foot .roster-btn,
+.rail-foot .install-app-btn {
   width: 100%;
   min-height: 40px;
   border-radius: 12px;
@@ -202,8 +203,10 @@ body.rail-collapsed .rail-inner { display: none; }
   font-weight: 600;
   padding: 8px 10px;
   text-decoration: none;
+  box-sizing: border-box;
 }
 .rail-foot .lang-btn {
+  grid-column: 1 / -1;
   border: 1px solid rgba(246,239,227,0.18);
   color: #f6efe3;
   background: transparent;
@@ -216,6 +219,30 @@ body.rail-collapsed .rail-inner { display: none; }
 }
 .rail-foot .roster-btn:hover { background: #fff; }
 .rail-foot .roster-btn svg { flex-shrink: 0; }
+.rail-foot .install-app-btn {
+  border: 0;
+  background: #00aba9;
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+}
+.rail-foot .install-app-btn:hover { filter: brightness(1.06); }
+.rail-foot .install-app-btn img {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.rail-foot .install-app-btn[hidden] { display: none !important; }
+.rail-foot .install-app-btn.is-installed {
+  background: rgba(246,239,227,0.16);
+  color: #f6efe3;
+  cursor: default;
+  filter: none;
+}
+.rail-foot .install-app-btn.is-installed img { opacity: 0.9; }
 .rail-sign {
   margin: 12px 0 2px;
   text-align: center;
@@ -244,7 +271,8 @@ body.rail-collapsed .rail-inner { display: none; }
   margin-top: auto;
 }
 .lang-mini,
-.roster-mini {
+.roster-mini,
+.install-mini {
   border: 1px solid rgba(246,239,227,0.22);
   background: none;
   color: #f6efe3;
@@ -258,11 +286,26 @@ body.rail-collapsed .rail-inner { display: none; }
   text-decoration: none;
   display: none;
   place-items: center;
+  padding: 0;
 }
 .roster-mini { background: #f6efe3; color: var(--navy); border-color: transparent; }
+.install-mini { background: #00aba9; border-color: transparent; }
+.install-mini img {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  object-fit: cover;
+}
+.install-mini[hidden] { display: none !important; }
+.install-mini.is-installed {
+  background: rgba(246,239,227,0.16);
+  cursor: default;
+}
 body.rail-collapsed .rail-mini-actions { display: flex; }
 body.rail-collapsed .lang-mini,
-body.rail-collapsed .roster-mini { display: grid; }
+body.rail-collapsed .roster-mini,
+body.rail-collapsed .install-mini { display: grid; }
 .edge-handle {
   width: 24px;
   height: 140px;
@@ -589,36 +632,6 @@ tbody tr.inbound-row:hover td { background: #f6f4ee; }
   background: var(--card);
   color: var(--navy);
   box-shadow: 0 1px 2px rgba(28, 25, 21, 0.06);
-}
-.install-app-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-inline-start: 6px;
-  border: 0;
-  background: #00aba9;
-  color: #fff;
-  font: inherit;
-  font-weight: 700;
-  font-size: 13px;
-  padding: 7px 12px 7px 8px;
-  border-radius: 11px;
-  cursor: pointer;
-  box-shadow: 0 1px 2px rgba(28, 25, 21, 0.08);
-}
-.install-app-btn:hover { filter: brightness(1.05); }
-.install-app-btn img {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: #fff;
-  object-fit: cover;
-}
-.install-app-btn[hidden] { display: none !important; }
-.install-app-btn.is-installed {
-  background: #ebe4d6;
-  color: var(--navy);
-  cursor: default;
 }
 .hint {
   margin: 0;
