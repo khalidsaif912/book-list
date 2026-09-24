@@ -753,14 +753,11 @@ table.mission-grid tr.mission-print-date td {
 }
 .mission-print-plane {
   display: inline-block;
+  width: 22px;
+  height: 22px;
   margin-inline-end: 0.55rem;
-  font-size: 1.15em;
-  line-height: 1;
-  vertical-align: -0.1em;
-  color: #000;
-  filter: grayscale(1) brightness(0);
-  -webkit-print-color-adjust: exact;
-  print-color-adjust: exact;
+  vertical-align: -4px;
+  object-fit: contain;
 }
 .mission-print-date-stamp {
   display: inline-block;

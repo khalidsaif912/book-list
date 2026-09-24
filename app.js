@@ -28,6 +28,7 @@ const SAMPLE_PLAN = "FligtLoadPlan_V1_WY171_MCTAMS_08Sep2026.pdf";
 const SAMPLE_BOOK = "Book List.pdf";
 const MISSION_KEEP = ["Dep Flt", "Airline Name", "Status", "Nature", "Dest.", "STD", "Dep Stand"];
 const EXCELJS_CDN = "https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js";
+const MISSION_PLANE_SRC = "data:image/png;base64,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";
 const AWB_PREFIX = "910";
 const PRESETS = [
   "https://www.google.com/search?q={flight}+{date}",
@@ -882,7 +883,7 @@ function missionPrintMastheadHtml(cols) {
   const label = escapeHtml(t().missionPrintDateLabel);
   const stamp = escapeHtml(formatMissionPrintStamp(new Date()));
   const n = Math.max(1, cols | 0);
-  return `<tr class="mission-print-date"><td colspan="${n}"><span class="mission-print-date-label">${label}</span><span class="mission-print-plane" aria-hidden="true">🛫</span><span class="mission-print-date-stamp">${stamp}</span></td></tr>`;
+  return `<tr class="mission-print-date"><td colspan="${n}"><span class="mission-print-date-label">${label}</span><img class="mission-print-plane" src="${MISSION_PLANE_SRC}" alt="" width="22" height="22" /><span class="mission-print-date-stamp">${stamp}</span></td></tr>`;
 }
 
 function clearMissionPreview() {
@@ -1336,14 +1337,11 @@ function printMissionRows(rows) {
   }
   .mission-print-plane {
     display: inline-block;
-    margin-inline-end: 0.5rem;
-    font-size: 12pt;
-    line-height: 1;
-    vertical-align: -0.08em;
-    color: #000;
-    filter: grayscale(1) brightness(0);
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+    width: 18px;
+    height: 18px;
+    margin-inline-end: 0.55rem;
+    vertical-align: -3px;
+    object-fit: contain;
   }
   .mission-print-date-stamp {
     display: inline-block;
